@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 
 class MainActivity : AppCompatActivity() {
@@ -27,6 +28,13 @@ class MainActivity : AppCompatActivity() {
         R.id.nav_settings to R.drawable.ic_settings_filled
     )
 
+    private val fadeOptions = NavOptions.Builder()
+        .setEnterAnim(R.anim.fade_in)
+        .setExitAnim(R.anim.fade_out)
+        .setPopEnterAnim(R.anim.fade_in)
+        .setPopExitAnim(R.anim.fade_out)
+        .build()
+
     private val destinationToViewId = destinationMap.entries
         .associate { (viewId, destId) -> destId to viewId }
 
@@ -42,7 +50,7 @@ class MainActivity : AppCompatActivity() {
             findViewById<ImageView>(viewId).setOnClickListener {
                 val target = destinationMap[viewId]!!
                 if (navController.currentDestination?.id != target) {
-                    navController.navigate(target)
+                    navController.navigate(target, null, fadeOptions)
                 }
 
                 updateIcons(viewId)
@@ -57,7 +65,6 @@ class MainActivity : AppCompatActivity() {
         updateIcons(R.id.nav_home)
     }
 
-    //TODO: Add melhor sombra
     //TODO: Add transição de telas
     //TODO: Add ripple effect
     //TODO: temas
