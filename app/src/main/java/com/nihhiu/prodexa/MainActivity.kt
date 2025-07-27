@@ -27,24 +27,31 @@ class MainActivity : AppCompatActivity() {
         R.id.nav_settings to R.drawable.ic_settings_filled
     )
 
-    //FIXME: quando uso "back" não altera o icon selecionado
+    private val destinationToViewId = destinationMap.entries
+        .associate { (viewId, destId) -> destId to viewId }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
+        val navHost = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHost.navController
 
         destinationMap.keys.forEach { viewId ->
-            findViewById<ImageView>(viewId).apply {
-                setOnClickListener {
-                    val targetDestination = destinationMap[viewId]!!
-                    if (navController.currentDestination?.id != targetDestination) {
-                        navController.navigate(targetDestination)
-                    }
-                    updateIcons(viewId)
+            findViewById<ImageView>(viewId).setOnClickListener {
+                val target = destinationMap[viewId]!!
+                if (navController.currentDestination?.id != target) {
+                    navController.navigate(target)
                 }
+
+                updateIcons(viewId)
             }
+        }
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val viewId = destinationToViewId[destination.id] ?: R.id.nav_home
+            updateIcons(viewId)
         }
 
         updateIcons(R.id.nav_home)
@@ -57,9 +64,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateIcons(selectedViewId: Int) {
         iconEmptyMap.keys.forEach { viewId ->
-            val imageView = findViewById<ImageView>(viewId)
-            val iconRes = if (viewId == selectedViewId) iconFullMap[viewId] else iconEmptyMap[viewId]
-            imageView.setImageResource(iconRes!!)
+            val iv = findViewById<ImageView>(viewId)
+            val iconRes = if (viewId == selectedViewId)
+                iconFullMap[viewId] else iconEmptyMap[viewId]
+            iv.setImageResource(iconRes!!)
         }
     }
 }
