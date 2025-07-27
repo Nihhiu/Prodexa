@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bottom_nav_margin_horizontal">75dp</dimen>
+    <dimen name="bottom_nav_margin_bottom">50dp</dimen>
+    <dimen name="bottom_nav_corner_radius">20dp</dimen>
+    <dimen name="bottom_nav_elevation">8dp</dimen>
+    <dimen name="bottom_nav_height">56dp</dimen>
+    <dimen name="bottom_nav_icon_size">50dp</dimen>
+    <dimen name="bottom_nav_inner_padding">12dp</dimen>
+</resources>

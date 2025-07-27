@@ -1,3 +1,9 @@
 <resources>
+    <!-- METADATA -->
     <string name="app_name">Prodexa</string>
+
+    <!-- NAVIGATION -->
+    <string name="home">Home</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="settings">Settings</string>
 </resources>

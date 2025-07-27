@@ -14,11 +14,13 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph"/>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
+    <include
+        layout="@layout/view_island_bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        app:menu="@menu/bottom_nav_menu"/>
+        android:layout_height="@dimen/bottom_nav_height"
+        android:layout_marginStart="@dimen/bottom_nav_margin_horizontal"
+        android:layout_marginEnd="@dimen/bottom_nav_margin_horizontal"
+        android:layout_marginBottom="@dimen/bottom_nav_margin_bottom"
+        android:layout_gravity="bottom"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

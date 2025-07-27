@@ -4,10 +4,6 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/navigation_home">
     <fragment
-        android:id="@+id/navigation_settings"
-        android:name="com.nihhiu.prodexa.ui.fragments.SettingsFragment"
-        android:label="Settings" />
-    <fragment
         android:id="@+id/navigation_home"
         android:name="com.nihhiu.prodexa.ui.fragments.HomeFragment"
         android:label="Home" />
@@ -15,4 +11,8 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.nihhiu.prodexa.ui.fragments.DashboardFragment"
         android:label="Dashboard" />
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.nihhiu.prodexa.ui.fragments.SettingsFragment"
+        android:label="Settings" />
 </navigation>
