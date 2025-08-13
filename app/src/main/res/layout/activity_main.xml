@@ -3,17 +3,33 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
+    <!-- AppBar with Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.Material3.ActionBar">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- FragmentContainer below toolbar -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="?attr/actionBarSize"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph"/>
+        app:navGraph="@navigation/nav_graph" />
 
+    <!-- Bottom Bar -->
     <include
         layout="@layout/view_island_bottom_bar"
         android:layout_width="match_parent"
@@ -22,5 +38,4 @@
         android:layout_marginEnd="@dimen/bottom_nav_margin_horizontal"
         android:layout_marginBottom="@dimen/bottom_nav_margin_bottom"
         android:layout_gravity="bottom"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

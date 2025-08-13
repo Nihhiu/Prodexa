@@ -3,9 +3,15 @@ package com.nihhiu.prodexa
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
+import com.google.android.material.appbar.MaterialToolbar
 
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
@@ -40,11 +46,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+
+
+
         setContentView(R.layout.activity_main)
 
         val navHost = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHost.navController
+
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
 
         destinationMap.keys.forEach { viewId ->
             findViewById<ImageView>(viewId).setOnClickListener {
@@ -65,10 +82,6 @@ class MainActivity : AppCompatActivity() {
         updateIcons(R.id.nav_home)
     }
 
-    //TODO: Add transição de telas
-    //TODO: Add ripple effect
-    //TODO: temas
-
     private fun updateIcons(selectedViewId: Int) {
         iconEmptyMap.keys.forEach { viewId ->
             val iv = findViewById<ImageView>(viewId)
@@ -76,5 +89,9 @@ class MainActivity : AppCompatActivity() {
                 iconFullMap[viewId] else iconEmptyMap[viewId]
             iv.setImageResource(iconRes!!)
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }

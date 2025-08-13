@@ -14,5 +14,17 @@
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.nihhiu.prodexa.ui.fragments.SettingsFragment"
-        android:label="Settings" />
+        android:label="Settings">
+        <action
+            android:id="@+id/action_settings_to_general"
+            app:destination="@id/navigation_settings_general"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/darken"
+            app:popEnterAnim="@anim/lighten"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_settings_general"
+        android:name="com.nihhiu.prodexa.ui.fragments.settings.GeneralFragment"
+        android:label="General" />
 </navigation>
