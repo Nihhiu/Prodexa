@@ -20,15 +20,15 @@ data class SettingsItems (
                     items = listOf(
                         MenuItem(
                             name = R.string.settings_configurations_general,
-                            navActionId = R.id.action_settings_to_general
+                            navActionId = R.navigation.settings_general_nav_graph
                         ),
                         MenuItem(
                             name = R.string.settings_configurations_appearance,
-                            navActionId = null
+                            navActionId = R.navigation.settings_appearance_nav_graph
                         ),
                         MenuItem(
                             name = R.string.settings_configurations_notifications,
-                            navActionId = null
+                            navActionId = R.navigation.settings_notification_nav_graph
                         )
                     )
                 ),
@@ -54,11 +54,11 @@ data class SettingsItems (
                     items = listOf(
                         MenuItem(
                             name = R.string.settings_privacy_privacyPolicy,
-                            navActionId = null
+                            navActionId = R.navigation.settings_privacy_policy_nav_graph
                         ),
                         MenuItem(
                             name = R.string.settings_privacy_storage,
-                            navActionId = null
+                            navActionId = R.navigation.settings_storage_nav_graph
                         )
                     )
                 )

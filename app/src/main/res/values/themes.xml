@@ -11,4 +11,16 @@
         <item name="cornerSize">@dimen/bottom_nav_corner_radius</item>
     </style>
 
+    <!-- styles.xml -->
+    <style name="Theme.Prodexa.FullScreenDialog" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowAnimationStyle">@style/FullScreenDialogWindowAnimation</item>
+    </style>
+
+    <style name="FullScreenDialogWindowAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_right</item>
+    </style>
+
+
 </resources>

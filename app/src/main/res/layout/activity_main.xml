@@ -10,12 +10,14 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:theme="@style/ThemeOverlay.Material3.ActionBar">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="20dp"
             android:background="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -32,6 +34,7 @@
     <!-- Bottom Bar -->
     <include
         layout="@layout/view_island_bottom_bar"
+        android:id="@+id/bottom_nav_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_nav_height"
         android:layout_marginStart="@dimen/bottom_nav_margin_horizontal"

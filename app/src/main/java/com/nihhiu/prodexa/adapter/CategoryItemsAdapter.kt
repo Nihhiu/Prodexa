@@ -15,6 +15,7 @@ import androidx.core.net.toUri
 import androidx.navigation.findNavController
 import com.nihhiu.prodexa.R
 import androidx.navigation.fragment.findNavController
+import com.nihhiu.prodexa.ui.fragments.overlay.FullscreenOverlayDialogFragment
 
 class CategoryItemsAdapter (
     private val items: List<MenuItem>,
@@ -55,9 +56,15 @@ class CategoryItemsAdapter (
                         ).show()
                     }
                 }
+
                 clicked.navActionId != null -> {
                     try {
-                        parentFragment.findNavController().navigate(clicked.navActionId)
+                        val overlay = FullscreenOverlayDialogFragment.newForNavGraph(
+                            navGraphId = clicked.navActionId,
+                            title = holder.itemName.text.toString()
+                        )
+                        overlay.show(parentFragment.parentFragmentManager, "fullscreen_overlay")
+
                     } catch (e: IllegalArgumentException) {
                         Toast.makeText(
                             holder.itemName.context,
@@ -67,7 +74,6 @@ class CategoryItemsAdapter (
                     }
                 }
 
-                // 3) Fallback
                 else -> {
                     Toast.makeText(
                         holder.itemView.context,

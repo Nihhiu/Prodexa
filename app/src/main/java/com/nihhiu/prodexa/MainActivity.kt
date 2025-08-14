@@ -1,19 +1,29 @@
 package com.nihhiu.prodexa
 
 import android.os.Bundle
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import androidx.activity.addCallback
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
 
     private val destinationMap = mapOf(
@@ -46,43 +56,43 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
-
-
-
         setContentView(R.layout.activity_main)
 
+        // main nav host
         val navHost = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHost.navController
 
+        val topLevelSet = destinationMap.values.toSet()
+        appBarConfiguration = AppBarConfiguration(topLevelSet)
+
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        // wire your custom bottom nav icons
         destinationMap.keys.forEach { viewId ->
             findViewById<ImageView>(viewId).setOnClickListener {
                 val target = destinationMap[viewId]!!
                 if (navController.currentDestination?.id != target) {
                     navController.navigate(target, null, fadeOptions)
                 }
-
                 updateIcons(viewId)
             }
         }
 
+        // original destination change handling
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            val viewId = destinationToViewId[destination.id] ?: R.id.nav_home
+            val viewId = destinationToViewId[destination.id]
             updateIcons(viewId)
         }
 
         updateIcons(R.id.nav_home)
     }
 
-    private fun updateIcons(selectedViewId: Int) {
+    private fun updateIcons(selectedViewId: Int?) {
         iconEmptyMap.keys.forEach { viewId ->
             val iv = findViewById<ImageView>(viewId)
             val iconRes = if (viewId == selectedViewId)
