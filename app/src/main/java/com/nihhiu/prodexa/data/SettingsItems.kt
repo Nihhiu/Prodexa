@@ -54,7 +54,7 @@ data class SettingsItems (
                     items = listOf(
                         MenuItem(
                             name = R.string.settings_privacy_privacyPolicy,
-                            navActionId = R.navigation.settings_privacy_policy_nav_graph
+                            link = "https://github.com/Nihhiu/Prodexa/blob/main/app/src/main/assets/privacy%20policy.md"
                         ),
                         MenuItem(
                             name = R.string.settings_privacy_storage,
