@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/settings_general_nav_graph"
+    app:startDestination="@id/navigation_settings_about">
+
+    <fragment
+        android:id="@+id/navigation_settings_about"
+        android:name="com.nihhiu.prodexa.ui.fragments.settings.AboutFragment"
+        android:label="Watch Ad" />
+
+</navigation>

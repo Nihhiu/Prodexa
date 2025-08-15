@@ -18,9 +18,8 @@
     <string name="settings_support_listenToMusic">Listen to Music</string>
     <string name="settings_support_otherLinks">Other Links</string>
 
-    <string name="settings_privacy">Privacy</string>
-    <string name="settings_privacy_privacyPolicy">Privacy Policy</string>
-    <string name="settings_privacy_storage">Storage</string>
-
-    <string name="settings_developedBy">Developed by @Nihhiu</string>
+    <string name="settings_infoStorage">Info and Storage</string>
+    <string name="settings_infoStorage_privacyPolicy">Privacy Policy</string>
+    <string name="settings_infoStorage_storage">Storage</string>
+    <string name="settings_infoStorage_about">About</string>
 </resources>
