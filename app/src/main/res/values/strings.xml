@@ -22,4 +22,16 @@
     <string name="settings_infoStorage_privacyPolicy">Privacy Policy</string>
     <string name="settings_infoStorage_storage">Storage</string>
     <string name="settings_infoStorage_about">About</string>
+
+    <!-- DASHBOARD -->
+    <string name="dashboard_tasks">Tasks</string>
+    <string name="dashboard_diary">Diary</string>
+    <string name="dashboard_calendar">Calendar</string>
+    <string name="dashboard_habits">Habits</string>
+    <string name="dashboard_wallet">Wallet</string>
+    <string name="dashboard_notes">Notes</string>
+    <string name="dashboard_countdown">Countdown</string>
+    <string name="dashboard_grocery">Grocery List</string>
+
+
 </resources>

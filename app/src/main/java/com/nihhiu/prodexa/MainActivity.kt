@@ -47,8 +47,8 @@ class MainActivity : AppCompatActivity() {
     private val fadeOptions = NavOptions.Builder()
         .setEnterAnim(R.anim.fade_in)
         .setExitAnim(R.anim.fade_out)
-        .setPopEnterAnim(R.anim.fade_in)
-        .setPopExitAnim(R.anim.fade_out)
+        .setPopEnterAnim(R.anim.fade_out)
+        .setPopExitAnim(R.anim.fade_in)
         .build()
 
     private val destinationToViewId = destinationMap.entries
