@@ -32,7 +32,7 @@ class DashboardGridAdapter(
 
     override fun onBindViewHolder(holder: DashboardViewHolder, position: Int) {
         val item = items[position]
-        holder.Name.text = holder.itemView.context.getString(item.name)
+        holder.Name.setText(item.name)
         holder.Icon.setImageResource(item.icon ?: R.drawable.ic_settings_empty)
 
         holder.Button.setOnClickListener {
@@ -69,7 +69,7 @@ class DashboardGridAdapter(
                 else -> {
                     Toast.makeText(
                         holder.itemView.context,
-                        "Functionality not implemented yet. :(",
+                        "Feature not implemented yet. :(",
                         Toast.LENGTH_SHORT
                     ).show()
                 }

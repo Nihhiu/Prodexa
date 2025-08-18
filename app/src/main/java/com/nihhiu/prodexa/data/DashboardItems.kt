@@ -69,8 +69,8 @@ val DashboardItems = listOf(
     DashboardItem(
         id = "grocery",
         name = R.string.dashboard_grocery,
-        icon = R.drawable.ic_shopping,
-        navActionId = null,
+        icon = R.drawable.ic_grocery,
+        navActionId = R.navigation.dashboard_grocery_nav_graph,
         enabled = true
     )
 )

@@ -30,6 +30,10 @@ class DashboardSettingsRepository(private val context: Context) {
         }
     }
 
+    fun getAllItems(): List<DashboardItem>{
+        return DashboardItems.sortedBy { context.getString(it.name) }
+    }
+
     private val SORT_KEY = "sort_mode"
     private val defaultOrder = listOf("tasks", "diary", "calendar", "habits", "wallet", "notes", "countdown", "grocery")
 
