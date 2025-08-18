@@ -20,56 +20,56 @@ val DashboardItems = listOf(
     DashboardItem(
         id = "tasks",
         name = R.string.dashboard_tasks,
-        icon = null,
+        icon = R.drawable.ic_tasks,
         navActionId = null,
         enabled = true
     ),
     DashboardItem(
         id = "diary",
         name = R.string.dashboard_diary,
-        icon = null,
+        icon = R.drawable.ic_diary,
         navActionId = null,
         enabled = true
     ),
     DashboardItem(
         id = "calendar",
         name = R.string.dashboard_calendar,
-        icon = null,
+        icon = R.drawable.ic_calendar,
         navActionId = null,
         enabled = true
     ),
     DashboardItem(
         id = "habits",
         name = R.string.dashboard_habits,
-        icon = null,
+        icon = R.drawable.ic_habit,
         navActionId = null,
         enabled = true
     ),
     DashboardItem(
         id = "wallet",
         name = R.string.dashboard_wallet,
-        icon = null,
+        icon = R.drawable.ic_wallet,
         navActionId = null,
         enabled = true
     ),
     DashboardItem(
         id = "notes",
         name = R.string.dashboard_notes,
-        icon = null,
+        icon = R.drawable.ic_notes,
         navActionId = null,
         enabled = true
     ),
     DashboardItem(
         id = "countdown",
         name = R.string.dashboard_countdown,
-        icon = null,
+        icon = R.drawable.ic_countdown,
         navActionId = null,
         enabled = true
     ),
     DashboardItem(
         id = "grocery",
         name = R.string.dashboard_grocery,
-        icon = null,
+        icon = R.drawable.ic_shopping,
         navActionId = null,
         enabled = true
     )

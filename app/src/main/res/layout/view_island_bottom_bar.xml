@@ -40,7 +40,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_weight="1"
         android:padding="12dp"
-        app:tint="@color/black" />
+        app:tint="@color/black"/>
 
     <!-- Settings -->
     <ImageView

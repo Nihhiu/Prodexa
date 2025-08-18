@@ -36,7 +36,7 @@ class CategoryItemsAdapter (
         val item = items[position]
         holder.itemName.setText(item.name)
 
-        holder.itemName.setOnClickListener {
+        holder.itemView.setOnClickListener {
             val pos = holder.bindingAdapterPosition
             if (pos == RecyclerView.NO_POSITION) return@setOnClickListener
 
