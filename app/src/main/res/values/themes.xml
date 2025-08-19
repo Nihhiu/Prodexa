@@ -8,7 +8,7 @@
     </style>
 
     <style name="ShapeAppearance.App.CornerRounded20" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerSize">@dimen/bottom_nav_corner_radius</item>
+        <item name="cornerSize">@dimen/general_corner_radius</item>
     </style>
 
     <!-- styles.xml -->

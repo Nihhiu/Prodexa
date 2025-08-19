@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="general_corner_radius">20dp</dimen>
+
     <dimen name="bottom_nav_margin_horizontal">70dp</dimen>
     <dimen name="bottom_nav_margin_bottom">40dp</dimen>
-    <dimen name="bottom_nav_corner_radius">20dp</dimen>
     <dimen name="bottom_nav_elevation">8dp</dimen>
     <dimen name="bottom_nav_height">65dp</dimen>
     <dimen name="bottom_nav_icon_size">55dp</dimen>
@@ -11,4 +12,5 @@
     <dimen name="margin">16dp</dimen>
     <dimen name="bottom_space">100dp</dimen>
     <dimen name="grid_space">25dp</dimen>
+    <dimen name="dropdown_option_padding">8dp</dimen>
 </resources>

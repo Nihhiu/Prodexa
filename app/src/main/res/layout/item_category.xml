@@ -28,6 +28,7 @@
         android:layout_margin="8dp"
         app:cardBackgroundColor="#E0E0E0"
         app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,8 +39,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp" />
+            android:paddingTop="@dimen/margin"
+            android:paddingBottom="@dimen/margin" />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
