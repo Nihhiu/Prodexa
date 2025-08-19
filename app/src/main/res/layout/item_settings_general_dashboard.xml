@@ -33,7 +33,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:showText="false"
-        android:layout_marginStart="@dimen/margin"/>
+        android:layout_marginStart="@dimen/margin"
+        android:track="@drawable/switch_track_selector"
+        app:useMaterialThemeColors="false" />
 
 
 </LinearLayout>

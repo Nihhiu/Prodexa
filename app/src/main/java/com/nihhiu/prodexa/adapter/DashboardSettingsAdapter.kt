@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.nihhiu.prodexa.R
@@ -40,6 +41,9 @@ class DashboardSettingsAdapter(
         holder.switch.setOnCheckedChangeListener { _, isChecked ->
             repo.saveItemEnabled(item.id, isChecked)
         }
+
+        holder.switch.setUseMaterialThemeColors(false)
+        holder.switch.trackDrawable = ContextCompat.getDrawable(holder.itemView.context, R.drawable.switch_track_selector)
     }
 
     override fun getItemCount() = items.size
