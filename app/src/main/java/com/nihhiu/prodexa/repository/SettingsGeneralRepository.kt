@@ -6,10 +6,25 @@ import com.nihhiu.prodexa.data.DashboardItems
 import com.nihhiu.prodexa.data.DashboardSortMode
 import androidx.core.content.edit
 
-class DashboardSettingsRepository(private val context: Context) {
+class SettingsGeneralRepository(private val context: Context) {
 
-    private val prefs = context.getSharedPreferences("dashboard_prefs", Context.MODE_PRIVATE)
+    private val prefs = context.getSharedPreferences("settings_general", Context.MODE_PRIVATE)
 
+    /**
+     USERNAME
+     **/
+
+    fun saveUsername(username: String) {
+        prefs.edit { putString("username", username) }
+    }
+
+    fun getUsername(): String {
+        return prefs.getString("username", "USERNAME ERROR") ?: "USERNAME ERROR"
+    }
+
+    /**
+     DASHBOARD LIST
+     **/
     fun saveItemEnabled(itemId: String, enabled: Boolean) {
         prefs.edit { putBoolean(itemId, enabled) }
     }
@@ -34,6 +49,9 @@ class DashboardSettingsRepository(private val context: Context) {
         return DashboardItems.sortedBy { context.getString(it.name) }
     }
 
+    /**
+     SORT
+     **/
     private val SORT_KEY = "sort_mode"
     private val defaultOrder = listOf("tasks", "diary", "calendar", "habits", "wallet", "notes", "countdown", "grocery")
 

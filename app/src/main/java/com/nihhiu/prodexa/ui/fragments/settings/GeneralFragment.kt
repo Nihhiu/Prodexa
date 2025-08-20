@@ -4,19 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.nihhiu.prodexa.R
 import com.nihhiu.prodexa.adapter.DashboardSettingsAdapter
-import com.nihhiu.prodexa.adapter.SettingsAdapter
 import com.nihhiu.prodexa.data.DashboardItem
 import com.nihhiu.prodexa.data.DashboardSortMode
-import com.nihhiu.prodexa.data.SettingsItems
-import com.nihhiu.prodexa.repository.DashboardSettingsRepository
+import com.nihhiu.prodexa.repository.SettingsGeneralRepository
 
 class GeneralFragment : Fragment() {
 
@@ -35,6 +37,11 @@ class GeneralFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         /**
+         USERNAME
+         **/
+        usernameSetup(view)
+
+        /**
          RECYCLER VIEW
          **/
         recyclerViewSetup(view)
@@ -48,9 +55,19 @@ class GeneralFragment : Fragment() {
     /**
      SETUP
      **/
+    private fun usernameSetup(view: View){
+        val usernameTv = view.findViewById<TextView>(R.id.username)
+        val usernameBt = view.findViewById<LinearLayout>(R.id.username_container)
+        usernameTv.text = SettingsGeneralRepository(requireContext()).getUsername()
+
+        usernameBt.setOnClickListener {
+            showUsernameDialog(usernameTv)
+        }
+    }
+
     private fun recyclerViewSetup(view: View) {
         recyclerView = view.findViewById(R.id.feature_list)
-        val data: List<DashboardItem> = DashboardSettingsRepository(requireContext()).getAllItems()
+        val data: List<DashboardItem> = SettingsGeneralRepository(requireContext()).getAllItems()
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = DashboardSettingsAdapter(data)
@@ -69,8 +86,68 @@ class GeneralFragment : Fragment() {
     /**
      HELPERS
      **/
+    private fun showUsernameDialog(usernameTv: TextView) {
+        val context = requireContext()
+        val username = SettingsGeneralRepository(context).getUsername()
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_username, null)
+        val textInputLayout = dialogView.findViewById<TextInputLayout>(R.id.username_text_input_layout)
+        val input = dialogView.findViewById<TextInputEditText>(R.id.username_input_edit_text)
+
+        input.setText(username)
+
+        val dialog = AlertDialog.Builder(context)
+            .setTitle(R.string.settings_configurations_general_username_title)
+            .setView(dialogView)
+            .setPositiveButton(R.string.confirm, null)
+            .setNegativeButton(R.string.cancel, null)
+            .create()
+
+        dialog.show()
+
+        setupValidationListener(dialog, input, textInputLayout, usernameTv)
+    }
+
+    private fun setupValidationListener(
+        dialog: AlertDialog,
+        input: TextInputEditText,
+        textInputLayout: TextInputLayout,
+        usernameTv: TextView
+    ) {
+        val context = dialog.context
+        val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+
+        positiveButton.setOnClickListener {
+            val rawText = input.text.toString()
+            val trimmedText = rawText.trim()
+            textInputLayout.error = null
+
+            when {
+                trimmedText.isEmpty() -> {
+                    textInputLayout.error = context.getString(R.string.settings_configurations_general_username_error_empty)
+                }
+                trimmedText.length < 2 -> {
+                    textInputLayout.error = context.getString(R.string.settings_configurations_general_username_error_too_short)
+                }
+                trimmedText.length > 40 -> {
+                    textInputLayout.error = context.getString(R.string.settings_configurations_general_username_error_too_long)
+                }
+                !trimmedText.matches(Regex("""^[^,"\n\r]{2,40}$""")) -> {
+                    textInputLayout.error = context.getString(R.string.settings_configurations_general_username_error_invalid_chars)
+                }
+                else -> {
+                    // CSV Validation
+                    val safeText = trimmedText.replace(",", "").replace("\"", "")
+                    SettingsGeneralRepository(context).saveUsername(safeText)
+                    usernameTv.text = safeText
+                    dialog.dismiss()
+                }
+            }
+        }
+    }
+
     private fun updateSelectedDashboardSortText(){
-        val currentMode = DashboardSettingsRepository(requireContext()).getSortMode()
+        val currentMode = SettingsGeneralRepository(requireContext()).getSortMode()
         val selectedText = when(currentMode){
             DashboardSortMode.DEFAULT -> R.string.settings_configurations_general_dashboard_sort_default
             DashboardSortMode.NAME_ASCENDING -> R.string.settings_configurations_general_dashboard_sort_name_ascending
@@ -92,7 +169,7 @@ class GeneralFragment : Fragment() {
             .setTitle(R.string.settings_configurations_general_dashboard_sort_title)
             .setItems(dialogItems) { _, which ->
                 val selectedMode = options[which].first
-                DashboardSettingsRepository(requireContext()).saveSortMode(selectedMode)
+                SettingsGeneralRepository(requireContext()).saveSortMode(selectedMode)
                 updateSelectedDashboardSortText()
             }.show()
     }

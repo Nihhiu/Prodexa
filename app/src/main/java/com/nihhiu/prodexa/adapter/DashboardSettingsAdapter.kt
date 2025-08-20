@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.nihhiu.prodexa.R
-import com.nihhiu.prodexa.repository.DashboardSettingsRepository
+import com.nihhiu.prodexa.repository.SettingsGeneralRepository
 import com.nihhiu.prodexa.data.DashboardItem
 
 class DashboardSettingsAdapter(
@@ -33,7 +33,7 @@ class DashboardSettingsAdapter(
         holder.name.setText(item.name)
         holder.icon.setImageResource(item.icon ?: R.drawable.ic_settings_empty)
 
-        val repo = DashboardSettingsRepository(holder.itemView.context)
+        val repo = SettingsGeneralRepository(holder.itemView.context)
 
         holder.switch.setOnCheckedChangeListener(null)
         holder.switch.isChecked = repo.isItemEnabled(item.id)

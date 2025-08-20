@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nihhiu.prodexa.R
 import com.nihhiu.prodexa.adapter.DashboardGridAdapter
 import com.nihhiu.prodexa.data.DashboardItem
-import com.nihhiu.prodexa.repository.DashboardSettingsRepository
+import com.nihhiu.prodexa.repository.SettingsGeneralRepository
 
 class DashboardFragment : Fragment() {
     override fun onCreateView(
@@ -26,7 +26,7 @@ class DashboardFragment : Fragment() {
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
 
-        val data: List<DashboardItem> = DashboardSettingsRepository(requireContext()).getEnabledItems()
+        val data: List<DashboardItem> = SettingsGeneralRepository(requireContext()).getEnabledItems()
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerView.adapter = DashboardGridAdapter(data)

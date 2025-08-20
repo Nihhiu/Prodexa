@@ -2,6 +2,12 @@
     <!-- METADATA -->
     <string name="app_name">Prodexa</string>
 
+    <!-- UI -->
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="accept">Accept</string>
+    <string name="deny">Deny</string>
+
     <!-- NAVIGATION -->
     <string name="home">Home</string>
     <string name="dashboard">Dashboard</string>
@@ -24,6 +30,13 @@
     <string name="settings_infoStorage_about">About</string>
 
     <!-- SETTINGS CONFIGURATIONS -->
+    <string name="settings_configurations_general_username_title">Username</string>
+    <string name="settings_configurations_general_username_hint">Matoko N.</string>
+    <string name="settings_configurations_general_username_error_empty">Username cannot be empty</string>">
+    <string name="settings_configurations_general_username_error_too_short">Really? 1 character for the Username?</string>
+    <string name="settings_configurations_general_username_error_too_long">Username must be at most 40 characters long</string>
+    <string name="settings_configurations_general_username_error_invalid_chars">Username can only contain letters, numbers, underscores, periods, and hyphens</string>
+
     <string name="settings_configurations_general_dashboard_feature_list_title">Dashboard Features</string>
 
     <string name="settings_configurations_general_dashboard_sort_title">Dashboard Sort</string>
