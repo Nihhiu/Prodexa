@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nihhiu.prodexa.R
 import com.nihhiu.prodexa.adapter.DashboardGridAdapter
 import com.nihhiu.prodexa.data.DashboardItem
 import com.nihhiu.prodexa.repository.SettingsGeneralRepository
+import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
     override fun onCreateView(
@@ -25,10 +27,15 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
-
-        val data: List<DashboardItem> = SettingsGeneralRepository(requireContext()).getEnabledItems()
-
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
-        recyclerView.adapter = DashboardGridAdapter(data)
+
+        val repo = SettingsGeneralRepository(requireContext())
+
+        // carregar assincronamente e então setar o adapter (ou atualizar um adapter existente)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val data: List<DashboardItem> = repo.getEnabledItems() // suspend
+            recyclerView.adapter = DashboardGridAdapter(data)
+        }
     }
+
 }

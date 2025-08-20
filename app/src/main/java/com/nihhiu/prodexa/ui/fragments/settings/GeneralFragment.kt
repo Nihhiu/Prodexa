@@ -1,15 +1,15 @@
 package com.nihhiu.prodexa.ui.fragments.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
@@ -19,11 +19,19 @@ import com.nihhiu.prodexa.adapter.DashboardSettingsAdapter
 import com.nihhiu.prodexa.data.DashboardItem
 import com.nihhiu.prodexa.data.DashboardSortMode
 import com.nihhiu.prodexa.repository.SettingsGeneralRepository
+import kotlinx.coroutines.launch
 
 class GeneralFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var sortSelected: LinearLayout
+
+    private lateinit var repo: SettingsGeneralRepository
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        repo = SettingsGeneralRepository(context.applicationContext)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,28 +45,31 @@ class GeneralFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         /**
-         USERNAME
+        USERNAME
          **/
         usernameSetup(view)
 
         /**
-         RECYCLER VIEW
+        RECYCLER VIEW
          **/
         recyclerViewSetup(view)
 
         /**
-         DASHBOARD SORT
+        DASHBOARD SORT
          **/
         dashboardSortSetup(view)
     }
 
     /**
-     SETUP
+    SETUP
      **/
     private fun usernameSetup(view: View){
         val usernameTv = view.findViewById<TextView>(R.id.username)
         val usernameBt = view.findViewById<LinearLayout>(R.id.username_container)
-        usernameTv.text = SettingsGeneralRepository(requireContext()).getUsername()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            usernameTv.text = repo.getUsername()
+        }
 
         usernameBt.setOnClickListener {
             showUsernameDialog(usernameTv)
@@ -67,10 +78,13 @@ class GeneralFragment : Fragment() {
 
     private fun recyclerViewSetup(view: View) {
         recyclerView = view.findViewById(R.id.feature_list)
-        val data: List<DashboardItem> = SettingsGeneralRepository(requireContext()).getAllItems()
 
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = DashboardSettingsAdapter(data)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val data: List<DashboardItem> = repo.getAllItems() // usa repo
+
+            recyclerView.layoutManager = LinearLayoutManager(requireContext())
+            recyclerView.adapter = DashboardSettingsAdapter(data, repo, viewLifecycleOwner.lifecycleScope)
+        }
     }
 
     private fun dashboardSortSetup(view: View){
@@ -84,17 +98,19 @@ class GeneralFragment : Fragment() {
     }
 
     /**
-     HELPERS
+    HELPERS
      **/
     private fun showUsernameDialog(usernameTv: TextView) {
         val context = requireContext()
-        val username = SettingsGeneralRepository(context).getUsername()
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_username, null)
         val textInputLayout = dialogView.findViewById<TextInputLayout>(R.id.username_text_input_layout)
         val input = dialogView.findViewById<TextInputEditText>(R.id.username_input_edit_text)
-
-        input.setText(username)
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            val username = repo.getUsername()
+            input.setText(username)
+        }
 
         val dialog = AlertDialog.Builder(context)
             .setTitle(R.string.settings_configurations_general_username_title)
@@ -138,8 +154,12 @@ class GeneralFragment : Fragment() {
                 else -> {
                     // CSV Validation
                     val safeText = trimmedText.replace(",", "").replace("\"", "")
-                    SettingsGeneralRepository(context).saveUsername(safeText)
                     usernameTv.text = safeText
+
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        repo.saveUsername(safeText)
+                    }
+
                     dialog.dismiss()
                 }
             }
@@ -147,13 +167,15 @@ class GeneralFragment : Fragment() {
     }
 
     private fun updateSelectedDashboardSortText(){
-        val currentMode = SettingsGeneralRepository(requireContext()).getSortMode()
-        val selectedText = when(currentMode){
-            DashboardSortMode.DEFAULT -> R.string.settings_configurations_general_dashboard_sort_default
-            DashboardSortMode.NAME_ASCENDING -> R.string.settings_configurations_general_dashboard_sort_name_ascending
-            DashboardSortMode.NAME_DESCENDING -> R.string.settings_configurations_general_dashboard_sort_name_descending
+        viewLifecycleOwner.lifecycleScope.launch {
+            val currentMode = repo.getSortMode()
+            val selectedText = when(currentMode){
+                DashboardSortMode.DEFAULT -> R.string.settings_configurations_general_dashboard_sort_default
+                DashboardSortMode.NAME_ASCENDING -> R.string.settings_configurations_general_dashboard_sort_name_ascending
+                DashboardSortMode.NAME_DESCENDING -> R.string.settings_configurations_general_dashboard_sort_name_descending
+            }
+            sortSelected.findViewById<TextView>(R.id.dashboard_sort_mode).text = getString(selectedText)
         }
-        sortSelected.findViewById<TextView>(R.id.dashboard_sort_mode).text = getString(selectedText)
     }
 
     private fun showDashboardSortDialog(){
@@ -169,8 +191,10 @@ class GeneralFragment : Fragment() {
             .setTitle(R.string.settings_configurations_general_dashboard_sort_title)
             .setItems(dialogItems) { _, which ->
                 val selectedMode = options[which].first
-                SettingsGeneralRepository(requireContext()).saveSortMode(selectedMode)
-                updateSelectedDashboardSortText()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repo.saveSortMode(selectedMode)
+                    updateSelectedDashboardSortText()
+                }
             }.show()
     }
 }
