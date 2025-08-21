@@ -1,21 +1,27 @@
 package com.nihhiu.prodexa.storage
 
+import android.app.Fragment
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
+import android.os.Environment
+import android.provider.OpenableColumns
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
-import androidx.core.net.toUri
 
 object StorageRepository {
 
@@ -62,37 +68,26 @@ object StorageRepository {
         }
     }
 
-    fun takePersistablePermission(context: Context, uri: Uri) {
-        try {
-            val flags = (android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    or android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-            context.contentResolver.takePersistableUriPermission(uri, flags)
-        } catch (e: SecurityException) {
-            e.printStackTrace()
-        }
-    }
-
-    /**
-    CSV
-     **/
-    suspend fun writeStringToUriAtomically(context: Context, targetUri: Uri, content: String) {
+    suspend fun getDisplayName(context: Context, uri: Uri, fallback: String): String =
         withContext(Dispatchers.IO) {
-            val temp = File.createTempFile("tmp_csv_", ".tmp", context.cacheDir)
-            temp.outputStream().buffered().use { it.write(content.toByteArray(Charsets.UTF_8)) }
-
-            context.contentResolver.openOutputStream(targetUri, "wt")?.use { out ->
-                FileInputStream(temp).use { fis ->
-                    fis.copyTo(out)
+            var name: String? = null
+            try {
+                context.contentResolver.query(
+                    uri,
+                    arrayOf(android.provider.OpenableColumns.DISPLAY_NAME),
+                    null,
+                    null,
+                    null
+                )?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val nameIdx = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                        if (nameIdx >= 0) name = cursor.getString(nameIdx)
+                    }
                 }
-            } ?: throw IOException("Failed to open output stream to $targetUri")
-
-            temp.delete()
+            } catch (_: Exception) {}
+            name ?: fallback
         }
-    }
 
-    suspend fun readStringFromUri(context: Context, uri: Uri): String = withContext(Dispatchers.IO) {
-        context.contentResolver.openInputStream(uri)?.bufferedReader(Charsets.UTF_8)?.use { it.readText() } ?: ""
-    }
 
     /**
     FILES
@@ -119,78 +114,14 @@ object StorageRepository {
         return found ?: createFileInTree(context, treeUri, displayName, mimeType)
     }
 
-    suspend fun ensureFeatureUri(
-        context: Context,
-        feature: String,
-        treeUriToCreateInside: Uri? = null
-    ): Uri? {
-        // ✅ Agora usa a versão suspend do DataStore
-        getPersistedUriForFeature(context, feature)?.let { return it }
-
-        val fname = fileNameForFeature(feature)
-        if (treeUriToCreateInside != null) {
-            val created = openOnCreateFileInTree(context, treeUriToCreateInside, fname)
-            if (created != null) {
-                persistUriForFeature(context, feature, created)
-            }
-            return created
-        }
-
-        return null
+    fun getAppExternalCsvDir(context: Context): File {
+        val dir = context.getExternalFilesDir("csv") ?: File(context.filesDir, "csv")
+        return dir
     }
 
-    suspend fun writeCsvForFeature(context: Context, feature: String, targetUri: Uri, csvContent: String) {
-        val m = mutexFor(feature)
-        m.withLock {
-            writeStringToUriAtomically(context, targetUri, csvContent)
-        }
-    }
+    fun getFileForFeature(context: Context, feature: String): File =
+        File(getAppExternalCsvDir(context), fileNameForFeature(feature))
 
-    suspend fun readCsvForFeature(context: Context, feature: String): String? {
-        val uri = getPersistedUriForFeature(context, feature) ?: return null
-        return mutexFor(feature).withLock {
-            readStringFromUri(context, uri)
-        }
-    }
-
-    suspend fun appendLineToCsvForFeature(context: Context, feature: String, csvLine: String, ensureNewLine: Boolean = true) {
-        val uri = getPersistedUriForFeature(context, feature) ?: throw IOException("No URI for feature $feature")
-        val m = mutexFor(feature)
-        m.withLock {
-            val existing = readStringFromUri(context, uri)
-            val newContent = StringBuilder(existing)
-            if (existing.isNotEmpty() && !existing.endsWith("\n")) newContent.append("\n")
-            newContent.append(csvLine)
-            if (ensureNewLine) newContent.append("\n")
-            writeStringToUriAtomically(context, uri, newContent.toString())
-        }
-    }
-
-    suspend fun listFilesInTree(context: Context, treeUri: Uri): List<DocumentFile> = withContext(Dispatchers.IO) {
-        val pickedDir = DocumentFile.fromTreeUri(context, treeUri)
-        pickedDir?.listFiles()?.toList() ?: emptyList()
-    }
-
-    suspend fun deleteFile(context: Context, fileUri: Uri): Boolean = withContext(Dispatchers.IO) {
-        val df = DocumentFile.fromSingleUri(context, fileUri) ?: return@withContext false
-        df.delete()
-    }
-
-    suspend fun renameFile(context: Context, fileUri: Uri, newDisplayName: String): Boolean = withContext(Dispatchers.IO) {
-        val df = DocumentFile.fromSingleUri(context, fileUri) ?: return@withContext false
-        df.renameTo(newDisplayName)
-    }
-
-    suspend fun migrateLocalFileToUri(context: Context, localFileName: String, targetUri: Uri) {
-        withContext(Dispatchers.IO) {
-            val local = File(context.filesDir, localFileName)
-            if (!local.exists()) throw IOException("Local file not found: $localFileName")
-
-            context.contentResolver.openOutputStream(targetUri, "wt")?.use { out ->
-                FileInputStream(local).use { fis ->
-                    fis.copyTo(out)
-                }
-            } ?: throw IOException("Couldn't open output stream to $targetUri")
-        }
-    }
+    fun getFallbackUriForFeature(context: Context, feature: String) =
+        getFileForFeature(context, feature).toUri()
 }

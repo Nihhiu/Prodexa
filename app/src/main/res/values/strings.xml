@@ -44,6 +44,9 @@
     <string name="settings_configurations_general_dashboard_sort_name_ascending">Name (A-Z)</string>
     <string name="settings_configurations_general_dashboard_sort_name_descending">Name (Z-A)</string>
 
+    <!-- SETTINGS INFO/STORAGE -->
+    <string name="settings_infoStorage_storage_dashboard">Dashboard Storage</string>
+
     <!-- DASHBOARD -->
     <string name="dashboard_tasks">Tasks</string>
     <string name="dashboard_diary">Diary</string>

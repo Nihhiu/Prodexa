@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/margin"
+    android:paddingEnd="@dimen/margin"
+    android:gravity="center_vertical"
+    android:padding="@dimen/half_margin"
+    android:clickable="true"
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/feature_icon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="@dimen/margin"
+        android:contentDescription="Icon Example"
+        android:src="@drawable/ic_calendar"
+        app:tint="@color/black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        tools:viewBindingIgnore="true">
+
+        <TextView
+            android:id="@+id/feature_name"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="Feature Name"
+            android:textSize="16sp"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/uri_saved"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/margin"
+            android:text="Feature Destiny"
+            android:textSize="12sp"/>
+    </LinearLayout>
+</LinearLayout>

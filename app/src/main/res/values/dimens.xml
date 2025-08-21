@@ -10,6 +10,7 @@
     <dimen name="bottom_nav_inner_padding">12dp</dimen>
 
     <dimen name="margin">16dp</dimen>
+    <dimen name="half_margin">8dp</dimen>
     <dimen name="bottom_space">100dp</dimen>
     <dimen name="grid_space">25dp</dimen>
     <dimen name="dropdown_option_padding">8dp</dimen>

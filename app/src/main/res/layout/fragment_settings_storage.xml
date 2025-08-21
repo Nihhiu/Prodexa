@@ -13,15 +13,42 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/margin">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/feature_list_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Storage Settings"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/feature_list_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/settings_infoStorage_storage_dashboard"
+                android:textSize="18sp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/feature_list_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#E0E0E0"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/feature_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

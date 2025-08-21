@@ -36,6 +36,4 @@
         android:layout_marginStart="@dimen/margin"
         android:track="@drawable/switch_track_selector"
         app:useMaterialThemeColors="false" />
-
-
 </LinearLayout>
