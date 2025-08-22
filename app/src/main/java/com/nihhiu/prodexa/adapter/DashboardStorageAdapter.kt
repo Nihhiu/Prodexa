@@ -62,7 +62,6 @@ class DashboardStorageAdapter(
                 }
             }
         }
-
     }
 
     override fun getItemCount(): Int = items.size
