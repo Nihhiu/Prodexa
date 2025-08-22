@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/settings_infoStorage_storage_dashboard"
+                android:text="@string/settings_configurations_storage_dashboard"
                 android:textSize="18sp" />
 
             <androidx.cardview.widget.CardView

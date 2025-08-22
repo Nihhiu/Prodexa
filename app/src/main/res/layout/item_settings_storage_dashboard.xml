@@ -8,9 +8,7 @@
     android:paddingStart="@dimen/margin"
     android:paddingEnd="@dimen/margin"
     android:gravity="center_vertical"
-    android:padding="@dimen/half_margin"
-    android:clickable="true"
-    android:focusable="true">
+    android:padding="@dimen/half_margin">
 
     <ImageView
         android:id="@+id/feature_icon"
@@ -22,8 +20,9 @@
         app:tint="@color/black" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center_vertical"
         tools:viewBindingIgnore="true">
@@ -44,5 +43,49 @@
             android:paddingStart="@dimen/margin"
             android:text="Feature Destiny"
             android:textSize="12sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Edit Button -->
+        <FrameLayout
+            android:id="@+id/ic_edit_path"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/margin"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:contentDescription="Edit Path"
+                android:src="@drawable/ic_edit_path"
+                app:tint="@color/black" />
+        </FrameLayout>
+
+        <!-- Remove Button -->
+        <FrameLayout
+            android:id="@+id/ic_remove_path"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/margin"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:contentDescription="Remove Path"
+                android:src="@drawable/ic_delete_path"
+                app:tint="@color/black" />
+        </FrameLayout>
     </LinearLayout>
 </LinearLayout>

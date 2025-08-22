@@ -27,6 +27,10 @@ data class SettingsItems (
                             navActionId = R.navigation.settings_appearance_nav_graph
                         ),
                         MenuItem(
+                            name = R.string.settings_configurations_storage,
+                            navActionId = R.navigation.settings_storage_nav_graph
+                        ),
+                        MenuItem(
                             name = R.string.settings_configurations_notifications,
                             navActionId = R.navigation.settings_notification_nav_graph
                         )
@@ -50,18 +54,14 @@ data class SettingsItems (
                     )
                 ),
                 SettingsItems(
-                    title = R.string.settings_infoStorage,
+                    title = R.string.settings_info,
                     items = listOf(
                         MenuItem(
-                            name = R.string.settings_infoStorage_privacyPolicy,
+                            name = R.string.settings_info_privacyPolicy,
                             link = "https://github.com/Nihhiu/Prodexa/blob/main/app/src/main/assets/privacy%20policy.md"
                         ),
                         MenuItem(
-                            name = R.string.settings_infoStorage_storage,
-                            navActionId = R.navigation.settings_storage_nav_graph
-                        ),
-                        MenuItem(
-                            name = R.string.settings_infoStorage_about,
+                            name = R.string.settings_info_about,
                             navActionId = R.navigation.settings_about_nav_graph
                         )
                     )

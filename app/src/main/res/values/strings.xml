@@ -17,6 +17,7 @@
     <string name="settings_configurations">Configurations</string>
     <string name="settings_configurations_general">General</string>
     <string name="settings_configurations_appearance">Appearance</string>
+    <string name="settings_configurations_storage">Storage</string>
     <string name="settings_configurations_notifications">Notifications</string>
 
     <string name="settings_support">Support</string>
@@ -24,18 +25,13 @@
     <string name="settings_support_listenToMusic">Listen to Music</string>
     <string name="settings_support_otherLinks">Other Links</string>
 
-    <string name="settings_infoStorage">Info and Storage</string>
-    <string name="settings_infoStorage_privacyPolicy">Privacy Policy</string>
-    <string name="settings_infoStorage_storage">Storage</string>
-    <string name="settings_infoStorage_about">About</string>
+    <string name="settings_info">Information</string>
+    <string name="settings_info_privacyPolicy">Privacy Policy</string>
+    <string name="settings_info_about">About</string>
 
     <!-- SETTINGS CONFIGURATIONS -->
     <string name="settings_configurations_general_username_title">Username</string>
     <string name="settings_configurations_general_username_hint">Matoko N.</string>
-    <string name="settings_configurations_general_username_error_empty">Username cannot be empty</string>">
-    <string name="settings_configurations_general_username_error_too_short">Really? 1 character for the Username?</string>
-    <string name="settings_configurations_general_username_error_too_long">Username must be at most 40 characters long</string>
-    <string name="settings_configurations_general_username_error_invalid_chars">Username can only contain letters, numbers, underscores, periods, and hyphens</string>
 
     <string name="settings_configurations_general_dashboard_feature_list_title">Dashboard Features</string>
 
@@ -44,8 +40,9 @@
     <string name="settings_configurations_general_dashboard_sort_name_ascending">Name (A-Z)</string>
     <string name="settings_configurations_general_dashboard_sort_name_descending">Name (Z-A)</string>
 
-    <!-- SETTINGS INFO/STORAGE -->
-    <string name="settings_infoStorage_storage_dashboard">Dashboard Storage</string>
+    <string name="settings_configurations_storage_dashboard">Dashboard Storage</string>
+
+    <!-- SETTINGS INFORMATION -->
 
     <!-- DASHBOARD -->
     <string name="dashboard_tasks">Tasks</string>
@@ -56,6 +53,14 @@
     <string name="dashboard_notes">Notes</string>
     <string name="dashboard_countdown">Countdown</string>
     <string name="dashboard_grocery">Grocery List</string>
+
+    <!-- ERRORS & WARNINGS -->
+    <string name="settings_configurations_general_username_error_empty">Username cannot be empty</string>">
+    <string name="settings_configurations_general_username_error_too_short">Really? 1 character for the Username?</string>
+    <string name="settings_configurations_general_username_error_too_long">Username must be at most 40 characters long</string>
+    <string name="settings_configurations_general_username_error_invalid_chars">Username can only contain letters, numbers, underscores, periods, and hyphens</string>
+
+    <string name="settings_configurations_storage_dashboard_error_file_not_found">File not found</string>
 
 
 </resources>

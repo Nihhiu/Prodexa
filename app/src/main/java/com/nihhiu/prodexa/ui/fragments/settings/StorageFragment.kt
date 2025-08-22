@@ -61,7 +61,7 @@ class StorageFragment : Fragment() {
 
                 viewLifecycleOwner.lifecycleScope.launch {
                     val mimeType = requireContext().contentResolver.getType(uri)
-                    val displayName = StorageRepository.getDisplayName(requireContext(), uri, "No file imported")
+                    val displayName = StorageRepository.getDisplayName(requireContext(), uri, getString(R.string.settings_configurations_storage_dashboard_error_file_not_found))
 
                     val isCsv = displayName.endsWith(".csv", ignoreCase = true) ||
                             (mimeType?.contains("csv") == true) ||
@@ -94,9 +94,9 @@ class StorageFragment : Fragment() {
             for (item in itemsList) {
                 val persisted = StorageRepository.getPersistedUriForFeature(requireContext(), item.id)
                 val displayName = if (persisted != null) {
-                    StorageRepository.getDisplayName(requireContext(), persisted, "No file imported")
+                    StorageRepository.getDisplayName(requireContext(), persisted, getString(R.string.settings_configurations_storage_dashboard_error_file_not_found))
                 } else {
-                    "No file imported"
+                    getString(R.string.settings_configurations_storage_dashboard_error_file_not_found)
                 }
                 uriDisplayMap[item.id] = displayName
             }
