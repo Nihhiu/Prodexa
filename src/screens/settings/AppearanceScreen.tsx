@@ -81,7 +81,13 @@ export const AppearanceScreen: React.FC = () => {
     <ScrollView
       className="flex-1"
       style={{ backgroundColor: colors.background }}
-      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 40 }}
+      contentContainerStyle={{
+        flexGrow: 1,
+        backgroundColor: colors.background,
+        paddingHorizontal: 16,
+        paddingTop: 16,
+        paddingBottom: 40,
+      }}
     >
       {/* ── Time selector ───────────────────────────────── */}
       <View className="mb-8">

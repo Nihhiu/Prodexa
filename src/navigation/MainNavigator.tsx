@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 import {
   HomeScreen,
   DashboardScreen,
@@ -20,7 +23,7 @@ import { RootStackParamList } from './types';
 import { useTheme } from '../hooks/useTheme';
 
 const tabs: TabKey[] = ['home', 'dashboard', 'settings'];
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 
 const MainTabsScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('home');
@@ -87,25 +90,76 @@ const MainTabsScreen: React.FC = () => {
 export const MainNavigator: React.FC = () => {
   const { colors } = useTheme();
 
+  const navigationTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: colors.primary,
+      background: colors.background,
+      card: colors.surface,
+      text: colors.text,
+      border: colors.surfaceBorder,
+      notification: colors.accent,
+    },
+  };
+
   const screenOptions = {
     headerStyle: { backgroundColor: colors.surface },
     headerTintColor: colors.text,
     headerTitleStyle: { color: colors.text },
-    contentStyle: { backgroundColor: colors.background },
+    cardStyle: { backgroundColor: colors.background },
+  };
+
+  const settingsDetailScreenOptions = {
+    cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+    gestureEnabled: true,
+    cardStyle: { backgroundColor: colors.background },
   };
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen name="MainTabs" component={MainTabsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="GeneralSettings" component={GeneralSettingsScreen} options={{ title: 'Geral' }} />
-        <Stack.Screen name="Appearance" component={AppearanceScreen} options={{ title: 'Aparência' }} />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Notificações' }} />
-        <Stack.Screen name="WatchAds" component={WatchAdsScreen} options={{ title: 'Assistir Publicidade' }} />
-        <Stack.Screen name="ListenMusic" component={ListenMusicScreen} options={{ title: 'Ouvir Música' }} />
-        <Stack.Screen name="OtherLinks" component={OtherLinksScreen} options={{ title: 'Outros Links' }} />
-        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ title: 'Política de Privacidade' }} />
-        <Stack.Screen name="Storage" component={StorageScreen} options={{ title: 'Armazenamento' }} />
+        <Stack.Screen
+          name="GeneralSettings"
+          component={GeneralSettingsScreen}
+          options={{ title: 'Geral', ...settingsDetailScreenOptions }}
+        />
+        <Stack.Screen
+          name="Appearance"
+          component={AppearanceScreen}
+          options={{ title: 'Aparência', ...settingsDetailScreenOptions }}
+        />
+        <Stack.Screen
+          name="Notifications"
+          component={NotificationsScreen}
+          options={{ title: 'Notificações', ...settingsDetailScreenOptions }}
+        />
+        <Stack.Screen
+          name="WatchAds"
+          component={WatchAdsScreen}
+          options={{ title: 'Assistir Publicidade', ...settingsDetailScreenOptions }}
+        />
+        <Stack.Screen
+          name="ListenMusic"
+          component={ListenMusicScreen}
+          options={{ title: 'Ouvir Música', ...settingsDetailScreenOptions }}
+        />
+        <Stack.Screen
+          name="OtherLinks"
+          component={OtherLinksScreen}
+          options={{ title: 'Outros Links', ...settingsDetailScreenOptions }}
+        />
+        <Stack.Screen
+          name="PrivacyPolicy"
+          component={PrivacyPolicyScreen}
+          options={{ title: 'Política de Privacidade', ...settingsDetailScreenOptions }}
+        />
+        <Stack.Screen
+          name="Storage"
+          component={StorageScreen}
+          options={{ title: 'Armazenamento', ...settingsDetailScreenOptions }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
