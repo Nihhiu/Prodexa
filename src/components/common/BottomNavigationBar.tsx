@@ -1,6 +1,15 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Animated, Easing, View, TouchableOpacity } from 'react-native';
+import {
+  Alert,
+  Animated,
+  Easing,
+  Platform,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTheme } from '../../hooks/useTheme';
 
 export type TabKey = 'home' | 'dashboard' | 'settings';
 
@@ -11,9 +20,12 @@ interface BottomNavigationBarProps {
 
 interface TabItemProps {
   tabKey: TabKey;
+  label: string;
   icon: React.ComponentProps<typeof Feather>['name'];
   isActive: boolean;
   onPress: (tab: TabKey) => void;
+  activeColor: string;
+  inactiveColor: string;
 }
 
 const TAB_SIZE = 48;
@@ -22,9 +34,12 @@ const NAV_HORIZONTAL_PADDING = 8;
 
 const TabItem: React.FC<TabItemProps> = ({
   tabKey,
+  label,
   icon,
   isActive,
   onPress,
+  activeColor,
+  inactiveColor,
 }) => {
   const activeAnim = useRef(new Animated.Value(isActive ? 1 : 0)).current;
   const pressAnim = useRef(new Animated.Value(0)).current;
@@ -73,9 +88,20 @@ const TabItem: React.FC<TabItemProps> = ({
     outputRange: [0.78, 1],
   });
 
+  const handleLongPress = () => {
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(label, ToastAndroid.SHORT);
+      return;
+    }
+
+    Alert.alert(label);
+  };
+
   return (
     <TouchableOpacity
       onPress={() => onPress(tabKey)}
+      onLongPress={handleLongPress}
+      delayLongPress={350}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       activeOpacity={0.8}
@@ -92,7 +118,7 @@ const TabItem: React.FC<TabItemProps> = ({
           name={icon}
           size={24}
           strokeWidth={2.5}
-          color={isActive ? '#3b82f6' : '#4b5563'}
+          color={isActive ? activeColor : inactiveColor}
         />
       </Animated.View>
     </TouchableOpacity>
@@ -105,6 +131,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
 }) => {
   const translateX = useRef(new Animated.Value(0)).current;
   const highlightScale = useRef(new Animated.Value(1)).current;
+  const { colors } = useTheme();
 
   const tabOrder: TabKey[] = useMemo(
     () => ['home', 'dashboard', 'settings'],
@@ -115,6 +142,12 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
     home: 'home',
     dashboard: 'grid',
     settings: 'settings',
+  };
+
+  const tabLabels: Record<TabKey, string> = {
+    home: 'Home',
+    dashboard: 'Dashboard',
+    settings: 'Settings',
   };
 
   const activeIndex = tabOrder.indexOf(activeTab);
@@ -149,10 +182,16 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   }, [activeIndex, highlightScale, translateX]);
 
   return (
-    <View className="bg-transparent px-4 pb-4 pt-2">
+    <View style={{ backgroundColor: colors.background }} className="px-4 pb-4 pt-2">
       <View
-        className="self-center rounded-2xl border border-gray-200 bg-white py-2 shadow-md"
-        style={{ width: navWidth, paddingHorizontal: NAV_HORIZONTAL_PADDING }}
+        className="self-center rounded-2xl py-2 shadow-md"
+        style={{
+          width: navWidth,
+          paddingHorizontal: NAV_HORIZONTAL_PADDING,
+          backgroundColor: colors.navBackground,
+          borderWidth: 1,
+          borderColor: colors.navBorder,
+        }}
       >
         <View className="relative flex-row items-center">
           <Animated.View
@@ -164,7 +203,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
               width: TAB_SIZE,
               height: TAB_SIZE,
               borderRadius: 8,
-              backgroundColor: '#eff6ff',
+              backgroundColor: colors.navActiveBackground,
               transform: [{ translateX }, { scale: highlightScale }],
             }}
           />
@@ -175,9 +214,12 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
             >
               <TabItem
                 tabKey={tabKey}
+                label={tabLabels[tabKey]}
                 icon={tabIcons[tabKey]}
                 isActive={activeTab === tabKey}
                 onPress={onTabChange}
+                activeColor={colors.navActive}
+                inactiveColor={colors.navInactive}
               />
             </View>
           ))}
