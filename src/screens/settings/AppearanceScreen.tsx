@@ -13,317 +13,26 @@ import {
 import { Feather } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
+import { type LanguagePreference } from '../../i18n';
+import { useLanguage } from '../../hooks/useLanguage';
 import { useTheme } from '../../hooks/useTheme';
-import type { ThemeColors, ThemeTime } from '../../types/theme';
+import type { ThemeTime } from '../../types/theme';
+import {
+  AnimatedPressable,
+  AnimatedSelectionIcon,
+  ImportCard,
+  LanguagePickerModal,
+  SelectableCard,
+  TimeOptionCard,
+} from './components';
 
 // ── Time labels & icons ───────────────────────────────────────
-const TIME_META: Record<ThemeTime, { label: string; icon: React.ComponentProps<typeof Feather>['name'] }> = {
-  day: { label: 'Dia', icon: 'sun' },
-  night: { label: 'Noite', icon: 'moon' },
-  midnight: { label: 'Meia-noite', icon: 'star' },
-};
-
-// ── Animated selectable card ──────────────────────────────────
-interface SelectableCardProps {
-  selected: boolean;
-  onPress: () => void;
-  colors: ThemeColors;
-  children: React.ReactNode;
-}
-
-const SelectableCard: React.FC<SelectableCardProps> = ({
-  selected,
-  onPress,
-  colors,
-  children,
-}) => {
-  const scale = useRef(new Animated.Value(1)).current;
-  const selectedProgress = useRef(new Animated.Value(selected ? 1 : 0)).current;
-
-  React.useEffect(() => {
-    Animated.timing(selectedProgress, {
-      toValue: selected ? 1 : 0,
-      duration: 180,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  }, [selected, selectedProgress]);
-
-  const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 0.96,
-      useNativeDriver: true,
-      speed: 30,
-      bounciness: 0,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.timing(scale, {
-      toValue: 1,
-      duration: 200,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  };
-
-  return (
-    <Animated.View
-      style={{
-        opacity: selectedProgress.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0.96, 1],
-        }),
-        transform: [
-          { scale },
-          {
-            scale: selectedProgress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [1, 1.012],
-            }),
-          },
-          {
-            translateY: selectedProgress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, -2],
-            }),
-          },
-        ],
-      }}
-    >
-      <Pressable
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        style={{
-          backgroundColor: colors.card,
-          borderColor: selected ? colors.primary : colors.cardBorder,
-          borderWidth: selected ? 2 : 1,
-          borderRadius: 12,
-          padding: 16,
-        }}
-      >
-        {children}
-      </Pressable>
-    </Animated.View>
-  );
-};
-
-// ── Import card (with dashed border and plus icon) ─────────────
-interface ImportCardProps {
-  colors: ThemeColors;
-  onPress: () => void;
-}
-
-const ImportCard: React.FC<ImportCardProps> = ({ colors, onPress }) => {
-  const scale = useRef(new Animated.Value(1)).current;
-  const iconPulse = useRef(new Animated.Value(0)).current;
-
-  React.useEffect(() => {
-    const pulseLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(iconPulse, {
-          toValue: 1,
-          duration: 900,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(iconPulse, {
-          toValue: 0,
-          duration: 900,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-
-    pulseLoop.start();
-    return () => pulseLoop.stop();
-  }, [iconPulse]);
-
-  const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 0.96,
-      useNativeDriver: true,
-      speed: 30,
-      bounciness: 0,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.timing(scale, {
-      toValue: 1,
-      duration: 200,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  };
-
-  return (
-    <Animated.View style={{ transform: [{ scale }] }}>
-      <Pressable
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        style={{
-          backgroundColor: colors.card,
-          borderColor: colors.cardBorder,
-          borderWidth: 2,
-          borderStyle: 'dashed',
-          borderRadius: 12,
-          padding: 16,
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: 120,
-        }}
-      >
-        <View
-          style={{
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            backgroundColor: colors.primary,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Animated.View
-            style={{
-              opacity: iconPulse.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.9, 1],
-              }),
-              transform: [
-                {
-                  scale: iconPulse.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1, 1.06],
-                  }),
-                },
-              ],
-            }}
-          >
-            <Feather name="plus" size={32} color={colors.card} />
-          </Animated.View>
-        </View>
-        <Text
-          className="mt-3 text-sm font-medium"
-          style={{ color: colors.textSecondary }}
-        >
-          Importar tema
-        </Text>
-      </Pressable>
-    </Animated.View>
-  );
-};
-
-interface AnimatedSelectionIconProps {
-  visible: boolean;
-  color: string;
-}
-
-const AnimatedSelectionIcon: React.FC<AnimatedSelectionIconProps> = ({
-  visible,
-  color,
-}) => {
-  const iconScale = useRef(new Animated.Value(visible ? 1 : 0.85)).current;
-  const iconOpacity = useRef(new Animated.Value(visible ? 1 : 0)).current;
-
-  React.useEffect(() => {
-    Animated.parallel([
-      Animated.timing(iconScale, {
-        toValue: visible ? 1 : 0.85,
-        duration: 150,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(iconOpacity, {
-        toValue: visible ? 1 : 0,
-        duration: 120,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [visible, iconOpacity, iconScale]);
-
-  if (!visible) return null;
-
-  return (
-    <Animated.View style={{ opacity: iconOpacity, transform: [{ scale: iconScale }] }}>
-      <Feather name="check-circle" size={24} color={color} />
-    </Animated.View>
-  );
-};
-
-interface TimeOptionCardProps {
-  t: ThemeTime;
-  selected: boolean;
-  colors: ThemeColors;
-  label: string;
-  icon: React.ComponentProps<typeof Feather>['name'];
-  onPress: () => void;
-}
-
-const TimeOptionCard: React.FC<TimeOptionCardProps> = ({
-  t,
-  selected,
-  colors,
-  label,
-  icon,
-  onPress,
-}) => {
-  const iconProgress = useRef(new Animated.Value(selected ? 1 : 0)).current;
-
-  React.useEffect(() => {
-    Animated.timing(iconProgress, {
-      toValue: selected ? 1 : 0,
-      duration: 180,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  }, [selected, iconProgress]);
-
-  return (
-    <View key={t} className="flex-1">
-      <SelectableCard selected={selected} onPress={onPress} colors={colors}>
-        <View className="items-center gap-2">
-          <Animated.View
-            style={{
-              transform: [
-                {
-                  scale: iconProgress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.92, 1.02],
-                  }),
-                },
-                {
-                  rotate: iconProgress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ['-6deg', '0deg'],
-                  }),
-                },
-              ],
-            }}
-          >
-            <Feather
-              name={icon}
-              size={24}
-              color={selected ? colors.primary : colors.textSecondary}
-            />
-          </Animated.View>
-          <Text
-            className="text-sm font-medium"
-            style={{
-              color: selected ? colors.primary : colors.textSecondary,
-            }}
-          >
-            {label}
-          </Text>
-        </View>
-      </SelectableCard>
-    </View>
-  );
+const TIME_ICONS: Record<ThemeTime, React.ComponentProps<typeof Feather>['name']> = {
+  day: 'sun',
+  night: 'moon',
+  midnight: 'star',
 };
 
 // ── Main AppearanceScreen ─────────────────────────────────────
@@ -340,6 +49,9 @@ export const AppearanceScreen: React.FC = () => {
     hasCustomTheme,
     removeCustomTheme,
   } = useTheme();
+  const { languagePreference, setLanguagePreference } = useLanguage();
+  const { t } = useTranslation();
+  const [isLanguagePickerOpen, setIsLanguagePickerOpen] = React.useState(false);
 
   // ── Optimistic selection state (instant visual feedback) ──
   const [optimisticThemeId, setOptimisticThemeId] = React.useState(themeId);
@@ -367,6 +79,14 @@ export const AppearanceScreen: React.FC = () => {
       setTime(t);
     },
     [setTime],
+  );
+
+  const handleSelectLanguagePreference = React.useCallback(
+    (preference: LanguagePreference) => {
+      setLanguagePreference(preference);
+      setIsLanguagePickerOpen(false);
+    },
+    [setLanguagePreference],
   );
 
   const [customThemeId, setCustomThemeId] = React.useState<string | null>(null);
@@ -532,7 +252,7 @@ export const AppearanceScreen: React.FC = () => {
 
       const asset = result.assets[0];
       if (!asset?.uri) {
-        Alert.alert('Erro', 'Não foi possível ler o ficheiro selecionado.');
+        Alert.alert(t('common.error'), t('appearance.cannotReadFile'));
         return;
       }
 
@@ -544,22 +264,22 @@ export const AppearanceScreen: React.FC = () => {
       const importResult = importThemeFromJson(rawJson);
 
       if (!importResult.success) {
-        Alert.alert('Tema inválido', importResult.error);
+        Alert.alert(t('appearance.invalidTheme'), importResult.error);
         return;
       }
 
       setPendingImportedThemeName(importResult.themeName);
 
-      Alert.alert('Tema aplicado', `Tema "${importResult.themeName}" importado com sucesso.`);
+      Alert.alert(t('appearance.importSuccess'), t('appearance.importSuccessMessage', { name: importResult.themeName }));
     } catch {
-      Alert.alert('Erro', 'Ocorreu um erro ao importar o tema.');
+      Alert.alert(t('common.error'), t('appearance.importError'));
     }
   };
 
   const handleExplainRemoveCustomTheme = () => {
     didLongPressRemoveRef.current = true;
 
-    const message = 'Remover tema importado';
+    const message = t('appearance.removeImportedTheme');
 
     if (Platform.OS === 'android') {
       ToastAndroid.show(message, ToastAndroid.SHORT);
@@ -640,25 +360,55 @@ export const AppearanceScreen: React.FC = () => {
         paddingBottom: 40,
       }}
     >
+      {/* ── Language selector ─────────────────────────── */}
+      <View className="mb-8">
+        <Text className="mb-2 text-lg font-semibold" style={{ color: colors.text }}>
+          {t('appearance.language')}
+        </Text>
+        <Text className="mb-4 text-sm" style={{ color: colors.textSecondary }}>
+          {t('appearance.languageDescription')}
+        </Text>
+
+        <AnimatedPressable
+          onPress={() => setIsLanguagePickerOpen(true)}
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.cardBorder,
+            borderWidth: 1,
+            borderRadius: 12,
+            paddingVertical: 14,
+            paddingHorizontal: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Text className="text-base font-medium" style={{ color: colors.text }}>
+            {t(`appearance.languageOptions.${languagePreference}`)}
+          </Text>
+          <Feather name="chevron-down" size={20} color={colors.textSecondary} />
+        </AnimatedPressable>
+      </View>
+
       {/* ── Time selector ───────────────────────────────── */}
       <View className="mb-8">
         <Text className="mb-4 text-lg font-semibold" style={{ color: colors.text }}>
-          Tempo
+          {t('appearance.time')}
         </Text>
         <View className="flex-row gap-3">
-          {availableTimes.map((t) => {
-            const meta = TIME_META[t];
-            const selected = t === optimisticTime;
+          {availableTimes.map((timeKey) => {
+            const icon = TIME_ICONS[timeKey];
+            const selected = timeKey === optimisticTime;
 
             return (
               <TimeOptionCard
-                key={t}
-                t={t}
+                key={timeKey}
+                t={timeKey}
                 selected={selected}
                 colors={colors}
-                label={meta.label}
-                icon={meta.icon}
-                onPress={() => handleSelectTime(t)}
+                label={t(`appearance.timeLabels.${timeKey}`)}
+                icon={icon}
+                onPress={() => handleSelectTime(timeKey)}
               />
             );
           })}
@@ -668,7 +418,7 @@ export const AppearanceScreen: React.FC = () => {
       {/* ── Theme selector ──────────────────────────────── */}
       <View className="mb-8">
         <Text className="mb-4 text-lg font-semibold" style={{ color: colors.text }}>
-          Tema
+          {t('appearance.theme')}
         </Text>
         <View className="gap-3">
           {/* Built-in themes */}
@@ -796,8 +546,8 @@ export const AppearanceScreen: React.FC = () => {
                     onLongPress={handleExplainRemoveCustomTheme}
                     delayLongPress={450}
                     accessibilityRole="button"
-                    accessibilityLabel="Eliminar tema importado"
-                    accessibilityHint="Remove o tema importado e volta para os temas padrão"
+                    accessibilityLabel={t('appearance.removeImportedTheme')}
+                    accessibilityHint={t('appearance.removeImportedHint')}
                     style={{
                       padding: 8,
                       borderRadius: 8,
@@ -831,6 +581,15 @@ export const AppearanceScreen: React.FC = () => {
           )}
         </View>
       </View>
+
+      <LanguagePickerModal
+        visible={isLanguagePickerOpen}
+        colors={colors}
+        selectedPreference={languagePreference}
+        onSelect={handleSelectLanguagePreference}
+        onClose={() => setIsLanguagePickerOpen(false)}
+        t={t}
+      />
     </ScrollView>
   );
 };

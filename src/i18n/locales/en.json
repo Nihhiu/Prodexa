@@ -1,0 +1,81 @@
+{
+  "common": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "language": "Language",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "error": "Error",
+    "success": "Success"
+  },
+  "settings": {
+    "title": "Settings",
+    "sections": {
+      "settings": "Settings",
+      "support": "Support",
+      "privacy": "Privacy"
+    },
+    "general": "General",
+    "appearance": "Appearance",
+    "notifications": "Notifications",
+    "watchAds": "Watch Ads",
+    "listenMusic": "Listen to Music",
+    "otherLinks": "Other Links",
+    "privacyPolicy": "Privacy Policy",
+    "storage": "Storage"
+  },
+  "general": {
+    "title": "General",
+    "language": "Language",
+    "languageDescription": "Choose the app language",
+    "languages": {
+      "pt": "Português",
+      "en": "English"
+    }
+  },
+  "appearance": {
+    "language": "Language",
+    "languageDescription": "Choose the app language",
+    "languagePickerTitle": "Select language",
+    "languagePickerDescription": "Choose how the app language should be applied.",
+    "languageOptions": {
+      "system": "System default",
+      "pt": "Português",
+      "en": "English"
+    },
+    "time": "Time",
+    "theme": "Theme",
+    "importTheme": "Import theme",
+    "importSuccess": "Theme applied",
+    "importSuccessMessage": "Theme \"{{name}}\" imported successfully.",
+    "importError": "An error occurred while importing the theme.",
+    "invalidTheme": "Invalid theme",
+    "cannotReadFile": "Could not read the selected file.",
+    "removeImportedTheme": "Remove imported theme",
+    "removeImportedHint": "Removes the imported theme and reverts to default themes",
+    "timeLabels": {
+      "day": "Day",
+      "night": "Night",
+      "midnight": "Midnight"
+    }
+  },
+  "notifications": {
+    "title": "Notifications"
+  },
+  "watchAds": {
+    "title": "Watch Ads"
+  },
+  "listenMusic": {
+    "title": "Listen to Music"
+  },
+  "otherLinks": {
+    "title": "Other Links"
+  },
+  "privacyPolicy": {
+    "title": "Privacy Policy"
+  },
+  "storageScreen": {
+    "title": "Storage"
+  }
+}

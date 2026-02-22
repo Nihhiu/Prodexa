@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MainNavigator } from 'src/navigation';
 import { ThemeProvider } from 'src/context/ThemeContext';
+import { LanguageProvider } from 'src/context/LanguageContext';
 import { useTheme } from 'src/hooks/useTheme';
 
 import './global.css';
@@ -14,11 +15,13 @@ function ThemedStatusBar() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <SafeAreaProvider>
-        <MainNavigator />
-        <ThemedStatusBar />
-      </SafeAreaProvider>
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <SafeAreaProvider>
+          <MainNavigator />
+          <ThemedStatusBar />
+        </SafeAreaProvider>
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }

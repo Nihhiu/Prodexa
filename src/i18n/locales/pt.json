@@ -1,0 +1,81 @@
+{
+  "common": {
+    "home": "Início",
+    "dashboard": "Dashboard",
+    "settings": "Definições",
+    "language": "Idioma",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "error": "Erro",
+    "success": "Sucesso"
+  },
+  "settings": {
+    "title": "Definições",
+    "sections": {
+      "settings": "Configurações",
+      "support": "Apoiar",
+      "privacy": "Privacidade"
+    },
+    "general": "Geral",
+    "appearance": "Aparência",
+    "notifications": "Notificações",
+    "watchAds": "Assistir Publicidade",
+    "listenMusic": "Ouvir Música",
+    "otherLinks": "Outros Links",
+    "privacyPolicy": "Política de Privacidade",
+    "storage": "Armazenamento"
+  },
+  "general": {
+    "title": "Geral",
+    "language": "Idioma",
+    "languageDescription": "Escolher o idioma da aplicação",
+    "languages": {
+      "pt": "Português",
+      "en": "English"
+    }
+  },
+  "appearance": {
+    "language": "Idioma",
+    "languageDescription": "Escolher o idioma da aplicação",
+    "languagePickerTitle": "Selecionar idioma",
+    "languagePickerDescription": "Escolhe como o idioma deve ser aplicado.",
+    "languageOptions": {
+      "system": "Padrão do sistema",
+      "pt": "Português",
+      "en": "English"
+    },
+    "time": "Tempo",
+    "theme": "Tema",
+    "importTheme": "Importar tema",
+    "importSuccess": "Tema aplicado",
+    "importSuccessMessage": "Tema \"{{name}}\" importado com sucesso.",
+    "importError": "Ocorreu um erro ao importar o tema.",
+    "invalidTheme": "Tema inválido",
+    "cannotReadFile": "Não foi possível ler o ficheiro selecionado.",
+    "removeImportedTheme": "Remover tema importado",
+    "removeImportedHint": "Remove o tema importado e volta para os temas padrão",
+    "timeLabels": {
+      "day": "Dia",
+      "night": "Noite",
+      "midnight": "Meia-noite"
+    }
+  },
+  "notifications": {
+    "title": "Notificações"
+  },
+  "watchAds": {
+    "title": "Assistir Publicidade"
+  },
+  "listenMusic": {
+    "title": "Ouvir Música"
+  },
+  "otherLinks": {
+    "title": "Outros Links"
+  },
+  "privacyPolicy": {
+    "title": "Política de Privacidade"
+  },
+  "storageScreen": {
+    "title": "Armazenamento"
+  }
+}

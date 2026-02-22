@@ -3,6 +3,7 @@ import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Animated, Easing, Pressable, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import type { ThemeColors } from '../types/theme';
 
@@ -66,39 +67,40 @@ const AnimatedSettingsItem: React.FC<AnimatedSettingsItemProps> = ({
 export const SettingsScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { colors } = useTheme();
+  const { t } = useTranslation();
 
   const settingsSections: SectionData[] = useMemo(
     () => [
       {
-        title: 'Configurações',
+        title: t('settings.sections.settings'),
         items: [
-          { label: 'Geral', onPress: () => navigation.navigate('GeneralSettings') },
-          { label: 'Aparência', onPress: () => navigation.navigate('Appearance') },
-          { label: 'Notificações', onPress: () => navigation.navigate('Notifications') },
+          { label: t('settings.general'), onPress: () => navigation.navigate('GeneralSettings') },
+          { label: t('settings.appearance'), onPress: () => navigation.navigate('Appearance') },
+          { label: t('settings.notifications'), onPress: () => navigation.navigate('Notifications') },
         ],
       },
       {
-        title: 'Apoiar',
+        title: t('settings.sections.support'),
         items: [
-          { label: 'Assistir Publicidade', onPress: () => navigation.navigate('WatchAds') },
-          { label: 'Ouvir Música', onPress: () => navigation.navigate('ListenMusic') },
-          { label: 'Outros Links', onPress: () => navigation.navigate('OtherLinks') },
+          { label: t('settings.watchAds'), onPress: () => navigation.navigate('WatchAds') },
+          { label: t('settings.listenMusic'), onPress: () => navigation.navigate('ListenMusic') },
+          { label: t('settings.otherLinks'), onPress: () => navigation.navigate('OtherLinks') },
         ],
       },
       {
-        title: 'Privacidade',
+        title: t('settings.sections.privacy'),
         items: [
-          { label: 'Política de Privacidade', onPress: () => navigation.navigate('PrivacyPolicy') },
-          { label: 'Armazenamento', onPress: () => navigation.navigate('Storage') },
+          { label: t('settings.privacyPolicy'), onPress: () => navigation.navigate('PrivacyPolicy') },
+          { label: t('settings.storage'), onPress: () => navigation.navigate('Storage') },
         ],
       },
     ],
-    [navigation],
+    [navigation, t],
   );
 
   return (
     <View className="flex-1 px-6 py-8 overflow-y-auto" style={{ backgroundColor: colors.background }}>
-      <Text className="mb-4 text-3xl font-bold" style={{ color: colors.text }}>Settings</Text>
+      <Text className="mb-4 text-3xl font-bold" style={{ color: colors.text }}>{t('settings.title')}</Text>
 
       {settingsSections.map((section) => (
         <View key={section.title} className="mb-5">

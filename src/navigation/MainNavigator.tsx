@@ -5,6 +5,7 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
 } from '@react-navigation/stack';
+import { useTranslation } from 'react-i18next';
 import {
   HomeScreen,
   DashboardScreen,
@@ -89,6 +90,7 @@ const MainTabsScreen: React.FC = () => {
 
 export const MainNavigator: React.FC = () => {
   const { colors } = useTheme();
+  const { t } = useTranslation();
 
   const navigationTheme = {
     ...DefaultTheme,
@@ -123,42 +125,42 @@ export const MainNavigator: React.FC = () => {
         <Stack.Screen
           name="GeneralSettings"
           component={GeneralSettingsScreen}
-          options={{ title: 'Geral', ...settingsDetailScreenOptions }}
+          options={{ title: t('settings.general'), ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="Appearance"
           component={AppearanceScreen}
-          options={{ title: 'Aparência', ...settingsDetailScreenOptions }}
+          options={{ title: t('settings.appearance'), ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="Notifications"
           component={NotificationsScreen}
-          options={{ title: 'Notificações', ...settingsDetailScreenOptions }}
+          options={{ title: t('settings.notifications'), ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="WatchAds"
           component={WatchAdsScreen}
-          options={{ title: 'Assistir Publicidade', ...settingsDetailScreenOptions }}
+          options={{ title: t('settings.watchAds'), ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="ListenMusic"
           component={ListenMusicScreen}
-          options={{ title: 'Ouvir Música', ...settingsDetailScreenOptions }}
+          options={{ title: t('settings.listenMusic'), ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="OtherLinks"
           component={OtherLinksScreen}
-          options={{ title: 'Outros Links', ...settingsDetailScreenOptions }}
+          options={{ title: t('settings.otherLinks'), ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="PrivacyPolicy"
           component={PrivacyPolicyScreen}
-          options={{ title: 'Política de Privacidade', ...settingsDetailScreenOptions }}
+          options={{ title: t('settings.privacyPolicy'), ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="Storage"
           component={StorageScreen}
-          options={{ title: 'Armazenamento', ...settingsDetailScreenOptions }}
+          options={{ title: t('settings.storage'), ...settingsDetailScreenOptions }}
         />
       </Stack.Navigator>
     </NavigationContainer>

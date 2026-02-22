@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 
 export type TabKey = 'home' | 'dashboard' | 'settings';
@@ -132,6 +133,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   const translateX = useRef(new Animated.Value(0)).current;
   const highlightScale = useRef(new Animated.Value(1)).current;
   const { colors } = useTheme();
+  const { t } = useTranslation();
 
   const tabOrder: TabKey[] = useMemo(
     () => ['home', 'dashboard', 'settings'],
@@ -145,9 +147,9 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   };
 
   const tabLabels: Record<TabKey, string> = {
-    home: 'Home',
-    dashboard: 'Dashboard',
-    settings: 'Settings',
+    home: t('common.home'),
+    dashboard: t('common.dashboard'),
+    settings: t('common.settings'),
   };
 
   const activeIndex = tabOrder.indexOf(activeTab);
