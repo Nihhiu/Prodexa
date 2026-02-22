@@ -1,0 +1,63 @@
+{
+  "id": "neon-vibe",
+  "name": "Neon Vibe",
+  "times": {
+    "day": {
+      "background": "#F0F0FF",
+      "surface": "#FFFFFF",
+      "surfaceBorder": "#E0D4FF",
+      "text": "#1A1A2E",
+      "textSecondary": "#666699",
+      "primary": "#FF006E",
+      "primaryText": "#FFFFFF",
+      "accent": "#00F5FF",
+      "navBackground": "#FFFFFF",
+      "navBorder": "#E0D4FF",
+      "navActive": "#FF006E",
+      "navActiveBackground": "#FFF0F8",
+      "navInactive": "#999BBB",
+      "card": "#FFFFFF",
+      "cardBorder": "#E0D4FF",
+      "separator": "#E0D4FF",
+      "statusBarStyle": "dark"
+    },
+    "night": {
+      "background": "#0F0F1E",
+      "surface": "#1A1A2E",
+      "surfaceBorder": "#2D2D44",
+      "text": "#F0F0FF",
+      "textSecondary": "#B0B0D9",
+      "primary": "#FF006E",
+      "primaryText": "#0F0F1E",
+      "accent": "#00F5FF",
+      "navBackground": "#1A1A2E",
+      "navBorder": "#2D2D44",
+      "navActive": "#FF006E",
+      "navActiveBackground": "#33001F",
+      "navInactive": "#66668F",
+      "card": "#1A1A2E",
+      "cardBorder": "#2D2D44",
+      "separator": "#2D2D44",
+      "statusBarStyle": "light"
+    },
+    "midnight": {
+      "background": "#050508",
+      "surface": "#0F0F1E",
+      "surfaceBorder": "#1A1A2E",
+      "text": "#E8E8F0",
+      "textSecondary": "#8080B0",
+      "primary": "#FF006E",
+      "primaryText": "#FFFFFF",
+      "accent": "#00F5FF",
+      "navBackground": "#0F0F1E",
+      "navBorder": "#1A1A2E",
+      "navActive": "#FF006E",
+      "navActiveBackground": "#1A001F",
+      "navInactive": "#444466",
+      "card": "#0F0F1E",
+      "cardBorder": "#1A1A2E",
+      "separator": "#1A1A2E",
+      "statusBarStyle": "light"
+    }
+  }
+}
