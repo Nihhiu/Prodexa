@@ -1,3 +1,4 @@
+// #region Imports
 import React, { useRef } from 'react';
 import {
   Alert,
@@ -12,7 +13,6 @@ import {
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 
 import { type LanguagePreference } from '../../i18n';
@@ -27,14 +27,18 @@ import {
   SelectableCard,
   TimeOptionCard,
 } from './components';
+// #endregion
 
+// #region Constants
 // ── Time labels & icons ───────────────────────────────────────
 const TIME_ICONS: Record<ThemeTime, React.ComponentProps<typeof Feather>['name']> = {
   day: 'sun',
   night: 'moon',
   midnight: 'star',
 };
+// #endregion
 
+// #region Screen
 // ── Main AppearanceScreen ─────────────────────────────────────
 export const AppearanceScreen: React.FC = () => {
   const {
@@ -47,12 +51,14 @@ export const AppearanceScreen: React.FC = () => {
     setTime,
     importThemeFromJson,
     hasCustomTheme,
+    customThemeId,
     removeCustomTheme,
   } = useTheme();
   const { languagePreference, setLanguagePreference } = useLanguage();
   const { t } = useTranslation();
   const [isLanguagePickerOpen, setIsLanguagePickerOpen] = React.useState(false);
 
+  // Estado otimista para feedback visual imediato durante seleção.
   // ── Optimistic selection state (instant visual feedback) ──
   const [optimisticThemeId, setOptimisticThemeId] = React.useState(themeId);
   const [optimisticTime, setOptimisticTime] = React.useState(time);
@@ -89,89 +95,14 @@ export const AppearanceScreen: React.FC = () => {
     [setLanguagePreference],
   );
 
-  const [customThemeId, setCustomThemeId] = React.useState<string | null>(null);
-  const [pendingImportedThemeName, setPendingImportedThemeName] = React.useState<string | null>(null);
   const [isRemovingCustomTheme, setIsRemovingCustomTheme] = React.useState(false);
-  const themesBeforeImportRef = useRef<Set<string> | null>(null);
-  const didHydratePreferencesRef = useRef(false);
   const didLongPressRemoveRef = useRef(false);
-
-  React.useEffect(() => {
-    if (didHydratePreferencesRef.current) return;
-    if (availableThemes.length === 0 || availableTimes.length === 0) return;
-
-    let active = true;
-
-    const hydratePreferences = async () => {
-      try {
-        const [savedThemeId, savedTime] = await Promise.all([
-          AsyncStorage.getItem(SELECTED_THEME_STORAGE_KEY),
-          AsyncStorage.getItem(SELECTED_TIME_STORAGE_KEY),
-        ]);
-
-        if (!active) return;
-
-        if (savedTime && availableTimes.includes(savedTime as ThemeTime)) {
-          setTime(savedTime as ThemeTime);
-        }
-
-        if (savedThemeId) {
-          const exists = availableThemes.some((t) => t.id === savedThemeId);
-          if (exists) {
-            setTheme(savedThemeId);
-          }
-        }
-      } catch {
-        // no-op
-      } finally {
-        if (active) didHydratePreferencesRef.current = true;
-      }
-    };
-
-    hydratePreferences();
-
-    return () => {
-      active = false;
-    };
-  }, [availableThemes, availableTimes, setTheme, setTime]);
-
-  React.useEffect(() => {
-    if (!didHydratePreferencesRef.current) return;
-
-    AsyncStorage.setItem(SELECTED_THEME_STORAGE_KEY, themeId).catch(() => {});
-    AsyncStorage.setItem(SELECTED_TIME_STORAGE_KEY, time).catch(() => {});
-  }, [themeId, time]);
-
-  React.useEffect(() => {
-    let active = true;
-
-    const loadCustomThemeId = async () => {
-      try {
-        const savedId = await AsyncStorage.getItem(CUSTOM_THEME_ID_STORAGE_KEY);
-        if (!active) return;
-
-        if (savedId) {
-          const exists = availableThemes.some((t) => t.id === savedId);
-          if (exists) {
-            setCustomThemeId(savedId);
-          }
-        }
-      } catch {
-        // no-op
-      }
-    };
-
-    loadCustomThemeId();
-
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const customThemeVisibility = useRef(new Animated.Value(hasCustomTheme ? 1 : 0)).current;
   const importCardVisibility = useRef(new Animated.Value(hasCustomTheme ? 0 : 1)).current;
   const customCardScale = useRef(new Animated.Value(1)).current;
 
+  // Anima entrada/saída do card de tema importado.
   React.useEffect(() => {
     Animated.timing(customThemeVisibility, {
       toValue: hasCustomTheme ? 1 : 0,
@@ -182,6 +113,7 @@ export const AppearanceScreen: React.FC = () => {
   }, [hasCustomTheme, customThemeVisibility]);
 
   React.useEffect(() => {
+    // Oculta cartão de importação quando já existe tema customizado ativo.
     if (!hasCustomTheme && !isRemovingCustomTheme) {
       importCardVisibility.setValue(1);
       return;
@@ -213,33 +145,6 @@ export const AppearanceScreen: React.FC = () => {
     }).start();
   };
 
-  React.useEffect(() => {
-    if (!hasCustomTheme) {
-      setCustomThemeId(null);
-      setPendingImportedThemeName(null);
-      themesBeforeImportRef.current = null;
-      AsyncStorage.removeItem(CUSTOM_THEME_ID_STORAGE_KEY).catch(() => {});
-      return;
-    }
-
-    if (!pendingImportedThemeName) return;
-
-    const before = themesBeforeImportRef.current;
-    let importedTheme =
-      before ? availableThemes.find((t) => !before.has(t.id)) : undefined;
-
-    if (!importedTheme) {
-      importedTheme = availableThemes.find((t) => t.name === pendingImportedThemeName);
-    }
-
-    if (importedTheme) {
-      setCustomThemeId(importedTheme.id);
-      AsyncStorage.setItem(CUSTOM_THEME_ID_STORAGE_KEY, importedTheme.id).catch(() => {});
-      setPendingImportedThemeName(null);
-      themesBeforeImportRef.current = null;
-    }
-  }, [availableThemes, hasCustomTheme, pendingImportedThemeName]);
-
   const handleImportTheme = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -259,16 +164,12 @@ export const AppearanceScreen: React.FC = () => {
       const response = await fetch(asset.uri);
       const rawJson = await response.text();
 
-      themesBeforeImportRef.current = new Set(availableThemes.map((t) => t.id));
-
       const importResult = importThemeFromJson(rawJson);
 
       if (!importResult.success) {
         Alert.alert(t('appearance.invalidTheme'), importResult.error);
         return;
       }
-
-      setPendingImportedThemeName(importResult.themeName);
 
       Alert.alert(t('appearance.importSuccess'), t('appearance.importSuccessMessage', { name: importResult.themeName }));
     } catch {
@@ -323,10 +224,6 @@ export const AppearanceScreen: React.FC = () => {
       }
 
       removeCustomTheme();
-      setCustomThemeId(null);
-      setPendingImportedThemeName(null);
-      themesBeforeImportRef.current = null;
-      AsyncStorage.removeItem(CUSTOM_THEME_ID_STORAGE_KEY).catch(() => {});
 
       customCardScale.setValue(1);
       setIsRemovingCustomTheme(false);
@@ -362,10 +259,10 @@ export const AppearanceScreen: React.FC = () => {
     >
       {/* ── Language selector ─────────────────────────── */}
       <View className="mb-8">
-        <Text className="mb-2 text-lg font-semibold" style={{ color: colors.text }}>
+        <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
           {t('appearance.language')}
         </Text>
-        <Text className="mb-4 text-sm" style={{ color: colors.textSecondary }}>
+        <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
           {t('appearance.languageDescription')}
         </Text>
 
@@ -383,7 +280,7 @@ export const AppearanceScreen: React.FC = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Text className="text-base font-medium" style={{ color: colors.text }}>
+          <Text className="text-base font-l_medium" style={{ color: colors.text }}>
             {t(`appearance.languageOptions.${languagePreference}`)}
           </Text>
           <Feather name="chevron-down" size={20} color={colors.textSecondary} />
@@ -392,7 +289,7 @@ export const AppearanceScreen: React.FC = () => {
 
       {/* ── Time selector ───────────────────────────────── */}
       <View className="mb-8">
-        <Text className="mb-4 text-lg font-semibold" style={{ color: colors.text }}>
+        <Text className="mb-4 text-lg font-l_semibold" style={{ color: colors.text }}>
           {t('appearance.time')}
         </Text>
         <View className="flex-row gap-3">
@@ -417,7 +314,7 @@ export const AppearanceScreen: React.FC = () => {
 
       {/* ── Theme selector ──────────────────────────────── */}
       <View className="mb-8">
-        <Text className="mb-4 text-lg font-semibold" style={{ color: colors.text }}>
+        <Text className="mb-4 text-lg font-l_semibold" style={{ color: colors.text }}>
           {t('appearance.theme')}
         </Text>
         <View className="gap-3">
@@ -435,7 +332,7 @@ export const AppearanceScreen: React.FC = () => {
                 <View className="gap-3">
                   <View className="flex-row items-center justify-between">
                     <Text
-                      className="text-base font-semibold"
+                      className="text-base font-l_semibold"
                       style={{ color: selected ? colors.primary : colors.text }}
                     >
                       {theme.name}
@@ -507,7 +404,7 @@ export const AppearanceScreen: React.FC = () => {
                   <View className="gap-3">
                     <View className="flex-row items-center justify-between">
                       <Text
-                        className="flex-1 text-base font-semibold"
+                        className="flex-1 text-base font-l_regular"
                         style={{ color: customThemeSelected ? colors.primary : colors.text }}
                       >
                         {customTheme.name}
@@ -593,7 +490,4 @@ export const AppearanceScreen: React.FC = () => {
     </ScrollView>
   );
 };
-
-const CUSTOM_THEME_ID_STORAGE_KEY = '@prodexa/customThemeId';
-const SELECTED_THEME_STORAGE_KEY = '@prodexa/selectedThemeId';
-const SELECTED_TIME_STORAGE_KEY = '@prodexa/selectedThemeTime';
+// #endregion

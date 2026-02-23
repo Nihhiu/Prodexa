@@ -1,13 +1,19 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   Alert,
-  Animated,
-  Easing,
   Platform,
   ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSequence,
+  interpolate,
+  Easing,
+} from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
@@ -42,51 +48,39 @@ const TabItem: React.FC<TabItemProps> = ({
   activeColor,
   inactiveColor,
 }) => {
-  const activeAnim = useRef(new Animated.Value(isActive ? 1 : 0)).current;
-  const pressAnim = useRef(new Animated.Value(0)).current;
+  const activeProgress = useSharedValue(isActive ? 1 : 0);
+  const pressProgress = useSharedValue(0);
 
   useEffect(() => {
-    Animated.timing(activeAnim, {
-      toValue: isActive ? 1 : 0,
+    activeProgress.value = withTiming(isActive ? 1 : 0, {
       duration: 140,
       easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  }, [activeAnim, isActive]);
+    });
+  }, [isActive]);
 
   const handlePressIn = () => {
-    Animated.timing(pressAnim, {
-      toValue: 1,
+    pressProgress.value = withTiming(1, {
       duration: 70,
       easing: Easing.out(Easing.quad),
-      useNativeDriver: true,
-    }).start();
+    });
   };
 
   const handlePressOut = () => {
-    Animated.timing(pressAnim, {
-      toValue: 0,
+    pressProgress.value = withTiming(0, {
       duration: 110,
       easing: Easing.out(Easing.quad),
-      useNativeDriver: true,
-    }).start();
+    });
   };
 
-  const activeScale = activeAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 1.06],
-  });
+  const animatedStyle = useAnimatedStyle(() => {
+    const activeScale = interpolate(activeProgress.value, [0, 1], [1, 1.06]);
+    const pressScale = interpolate(pressProgress.value, [0, 1], [1, 0.94]);
+    const opacity = interpolate(activeProgress.value, [0, 1], [0.78, 1]);
 
-  const pressScale = pressAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0.94],
-  });
-
-  const iconScale = Animated.multiply(activeScale, pressScale);
-
-  const iconOpacity = activeAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.78, 1],
+    return {
+      opacity,
+      transform: [{ scale: activeScale * pressScale }],
+    };
   });
 
   const handleLongPress = () => {
@@ -109,12 +103,7 @@ const TabItem: React.FC<TabItemProps> = ({
       className="items-center justify-center rounded-md"
       style={{ width: TAB_SIZE, height: TAB_SIZE }}
     >
-      <Animated.View
-        style={{
-          opacity: iconOpacity,
-          transform: [{ scale: iconScale }],
-        }}
-      >
+      <Animated.View style={animatedStyle}>
         <Feather
           name={icon}
           size={24}
@@ -130,8 +119,8 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   activeTab,
   onTabChange,
 }) => {
-  const translateX = useRef(new Animated.Value(0)).current;
-  const highlightScale = useRef(new Animated.Value(1)).current;
+  const translateX = useSharedValue(0);
+  const highlightScale = useSharedValue(1);
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -159,29 +148,28 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
     NAV_HORIZONTAL_PADDING * 2;
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(translateX, {
-        toValue: activeIndex * (TAB_SIZE + TAB_GAP),
-        duration: 180,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
+    translateX.value = withTiming(activeIndex * (TAB_SIZE + TAB_GAP), {
+      duration: 180,
+      easing: Easing.out(Easing.cubic),
+    });
+    highlightScale.value = withSequence(
+      withTiming(0.96, {
+        duration: 80,
+        easing: Easing.out(Easing.quad),
       }),
-      Animated.sequence([
-        Animated.timing(highlightScale, {
-          toValue: 0.96,
-          duration: 80,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(highlightScale, {
-          toValue: 1,
-          duration: 100,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
-    ]).start();
-  }, [activeIndex, highlightScale, translateX]);
+      withTiming(1, {
+        duration: 100,
+        easing: Easing.out(Easing.quad),
+      }),
+    );
+  }, [activeIndex]);
+
+  const highlightStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { scale: highlightScale.value },
+    ],
+  }));
 
   return (
     <View style={{ backgroundColor: colors.background }} className="px-4 pb-4 pt-2">
@@ -198,16 +186,18 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         <View className="relative flex-row items-center">
           <Animated.View
             pointerEvents="none"
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              width: TAB_SIZE,
-              height: TAB_SIZE,
-              borderRadius: 8,
-              backgroundColor: colors.navActiveBackground,
-              transform: [{ translateX }, { scale: highlightScale }],
-            }}
+            style={[
+              {
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                width: TAB_SIZE,
+                height: TAB_SIZE,
+                borderRadius: 8,
+                backgroundColor: colors.navActiveBackground,
+              },
+              highlightStyle,
+            ]}
           />
           {tabOrder.map((tabKey, index) => (
             <View

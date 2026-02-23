@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import type { ThemeColors } from '../../types/theme';
+import { useTheme } from '../../hooks/useTheme';
 
 type CardVariant = 'default' | 'outlined' | 'elevated';
 
@@ -20,21 +21,22 @@ export const Card = ({
   className = '',
   themeColors,
 }: CardProps) => {
+  const { colors } = useTheme();
+  const resolvedThemeColors = themeColors ?? colors;
+
   const cardStyle = themeColors
     ? {
         backgroundColor: themeColors.card,
         borderColor: themeColors.cardBorder,
         borderWidth: variant === 'outlined' ? 2 : 1,
       }
-    : undefined;
+    : {
+        backgroundColor: resolvedThemeColors.card,
+        borderColor: resolvedThemeColors.cardBorder,
+        borderWidth: variant === 'outlined' ? 2 : 1,
+      };
 
-  const variantClass = themeColors
-    ? ''
-    : variant === 'default'
-      ? 'bg-white border border-gray-200'
-      : variant === 'outlined'
-        ? 'bg-transparent border-2 border-gray-300'
-        : 'bg-white shadow-lg';
+  const variantClass = variant === 'elevated' ? 'shadow-lg' : '';
 
   return (
     <View
@@ -44,14 +46,14 @@ export const Card = ({
       {title && (
         <>
           <Text
-            className="mb-3 text-lg font-bold"
-            style={themeColors ? { color: themeColors.text } : { color: '#1f2937' }}
+            className="mb-3 text-lg font-l_bold"
+            style={{ color: resolvedThemeColors.text }}
           >
             {title}
           </Text>
           <View
             className="mb-4 h-[1px]"
-            style={{ backgroundColor: themeColors?.separator ?? '#e5e7eb' }}
+            style={{ backgroundColor: resolvedThemeColors.separator }}
           />
         </>
       )}

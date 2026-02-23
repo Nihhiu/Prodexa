@@ -1,62 +1,77 @@
-import React, { useRef } from 'react';
-import { Animated, Easing, Pressable, Text, View } from 'react-native';
+// #region Imports
+import React, { useEffect } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  withRepeat,
+  withSequence,
+  interpolate,
+  Easing,
+} from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import type { ThemeColors } from '../../../types/theme';
+// #endregion
 
+// #region Types
 interface ImportCardProps {
   colors: ThemeColors;
   onPress: () => void;
 }
+// #endregion
 
+// #region Component
 export const ImportCard: React.FC<ImportCardProps> = ({ colors, onPress }) => {
-  const scale = useRef(new Animated.Value(1)).current;
-  const iconPulse = useRef(new Animated.Value(0)).current;
+  const scale = useSharedValue(1);
+  const iconPulse = useSharedValue(0);
   const { t } = useTranslation();
 
-  React.useEffect(() => {
-    const pulseLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(iconPulse, {
-          toValue: 1,
+  // Pulso contínuo no ícone para destacar ação de importação.
+  useEffect(() => {
+    iconPulse.value = withRepeat(
+      withSequence(
+        withTiming(1, {
           duration: 900,
           easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
         }),
-        Animated.timing(iconPulse, {
-          toValue: 0,
+        withTiming(0, {
           duration: 900,
           easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
         }),
-      ]),
+      ),
+      -1,
+      false,
     );
-
-    pulseLoop.start();
-    return () => pulseLoop.stop();
-  }, [iconPulse]);
+  }, []);
 
   const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 0.96,
-      useNativeDriver: true,
-      speed: 30,
-      bounciness: 0,
-    }).start();
+    scale.value = withSpring(0.96, { damping: 20, stiffness: 400 });
   };
 
   const handlePressOut = () => {
-    Animated.timing(scale, {
-      toValue: 1,
+    scale.value = withTiming(1, {
       duration: 200,
       easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
+    });
   };
 
+  const containerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const pulseStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(iconPulse.value, [0, 1], [0.9, 1]),
+    transform: [
+      { scale: interpolate(iconPulse.value, [0, 1], [1, 1.06]) },
+    ],
+  }));
+
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
+    <Animated.View style={containerStyle}>
       <Pressable
         onPress={onPress}
         onPressIn={handlePressIn}
@@ -83,29 +98,15 @@ export const ImportCard: React.FC<ImportCardProps> = ({ colors, onPress }) => {
             justifyContent: 'center',
           }}
         >
-          <Animated.View
-            style={{
-              opacity: iconPulse.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.9, 1],
-              }),
-              transform: [
-                {
-                  scale: iconPulse.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1, 1.06],
-                  }),
-                },
-              ],
-            }}
-          >
+          <Animated.View style={pulseStyle}>
             <Feather name="plus" size={32} color={colors.card} />
           </Animated.View>
         </View>
-        <Text className="mt-3 text-sm font-medium" style={{ color: colors.textSecondary }}>
+        <Text className="mt-3 text-sm font-l_medium" style={{ color: colors.textSecondary }}>
           {t('appearance.importTheme')}
         </Text>
       </Pressable>
     </Animated.View>
   );
 };
+// #endregion

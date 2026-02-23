@@ -9,7 +9,7 @@ export const DashboardScreen: React.FC = () => {
 
   return (
     <View className="flex-1 items-center justify-center" style={{ backgroundColor: colors.background }}>
-      <Text className="text-3xl font-bold" style={{ color: colors.text }}>{t('common.dashboard')}</Text>
+      <Text className="text-3xl font-l_semibold" style={{ color: colors.text }}>{t('common.dashboard')}</Text>
     </View>
   );
 };

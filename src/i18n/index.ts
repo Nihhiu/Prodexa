@@ -92,7 +92,11 @@ export async function applyLanguagePreference(
   preference: LanguagePreference,
 ): Promise<LanguageCode> {
   const resolvedLanguage = resolveLanguageForPreference(preference);
-  await i18n.changeLanguage(resolvedLanguage);
+
+  if (i18n.language !== resolvedLanguage) {
+    await i18n.changeLanguage(resolvedLanguage);
+  }
+
   await persistLanguagePreference(preference);
   return resolvedLanguage;
 }
@@ -101,15 +105,17 @@ export async function applyLanguagePreference(
 export async function initI18n(): Promise<InitialLanguageState> {
   const initialState = await getInitialLanguageState();
 
-  await i18n.use(initReactI18next).init({
-    resources: {
-      pt: { translation: pt },
-      en: { translation: en },
-    },
-    lng: initialState.language,
-    fallbackLng: 'pt',
-    interpolation: { escapeValue: false },
-  });
+  if (!i18n.isInitialized) {
+    await i18n.use(initReactI18next).init({
+      resources: {
+        pt: { translation: pt },
+        en: { translation: en },
+      },
+      lng: initialState.language,
+      fallbackLng: 'pt',
+      interpolation: { escapeValue: false },
+    });
+  }
 
   return initialState;
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { useTheme } from '../../hooks/useTheme';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'outline';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -12,13 +13,6 @@ interface ButtonProps {
   disabled?: boolean;
   icon?: React.ReactNode;
 }
-
-const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-blue-600 active:bg-blue-700',
-  secondary: 'bg-green-600 active:bg-green-700',
-  danger: 'bg-red-600 active:bg-red-700',
-  outline: 'border-2 border-blue-600 active:bg-blue-50',
-};
 
 const sizeStyles: Record<ButtonSize, string> = {
   sm: 'px-3 py-2',
@@ -34,19 +28,27 @@ export const Button = ({
   disabled = false,
   icon,
 }: ButtonProps) => {
-  const textColor = variant === 'outline' ? 'text-blue-600' : 'text-white';
+  const { colors } = useTheme();
+
+  const styleByVariant: Record<ButtonVariant, { backgroundColor?: string; borderColor?: string; borderWidth?: number }> = {
+    primary: { backgroundColor: colors.primary },
+    secondary: { backgroundColor: colors.accent },
+    danger: { backgroundColor: colors.accent },
+    outline: { borderColor: colors.primary, borderWidth: 2, backgroundColor: 'transparent' },
+  };
+
+  const labelColor = variant === 'outline' ? colors.primary : colors.primaryText;
 
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      className={`flex-row items-center justify-center rounded-lg ${sizeStyles[size]} ${
-        disabled ? 'opacity-50' : ''
-      } ${variantStyles[variant]}`}
+      className={`flex-row items-center justify-center rounded-lg ${sizeStyles[size]} ${disabled ? 'opacity-50' : ''}`}
+      style={styleByVariant[variant]}
     >
       <View className="flex-row items-center gap-2">
         {icon && icon}
-        <Text className={`font-semibold ${textColor}`}>{label}</Text>
+        <Text className="font-l_semibold" style={{ color: labelColor }}>{label}</Text>
       </View>
     </Pressable>
   );

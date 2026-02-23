@@ -9,7 +9,7 @@ export const HomeScreen: React.FC = () => {
 
   return (
     <View className="flex-1 items-center justify-center" style={{ backgroundColor: colors.background }}>
-      <Text className="text-3xl font-bold" style={{ color: colors.text }}>{t('common.home')}</Text>
+      <Text className="text-3xl font-l_bold" style={{ color: colors.text }}>{t('common.home')}</Text>
     </View>
   );
 };

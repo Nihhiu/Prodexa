@@ -1,6 +1,16 @@
-import React, { useRef } from 'react';
-import { Animated, Easing, Pressable } from 'react-native';
+// #region Imports
+import React from 'react';
+import { Pressable } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  Easing,
+} from 'react-native-reanimated';
+// #endregion
 
+// #region Types
 interface AnimatedPressableProps {
   onPress?: () => void;
   onLongPress?: () => void;
@@ -9,7 +19,9 @@ interface AnimatedPressableProps {
   children: React.ReactNode;
   pressedScale?: number;
 }
+// #endregion
 
+// #region Component
 export const AnimatedPressable: React.FC<AnimatedPressableProps> = ({
   onPress,
   onLongPress,
@@ -18,28 +30,26 @@ export const AnimatedPressable: React.FC<AnimatedPressableProps> = ({
   children,
   pressedScale = 0.97,
 }) => {
-  const scale = useRef(new Animated.Value(1)).current;
+  const scale = useSharedValue(1);
 
+  // Aplica redução de escala durante o toque para feedback tátil.
   const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: pressedScale,
-      useNativeDriver: true,
-      speed: 30,
-      bounciness: 0,
-    }).start();
+    scale.value = withSpring(pressedScale, { damping: 20, stiffness: 400 });
   };
 
   const handlePressOut = () => {
-    Animated.timing(scale, {
-      toValue: 1,
+    scale.value = withTiming(1, {
       duration: 160,
       easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
+    });
   };
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
+    <Animated.View style={animatedStyle}>
       <Pressable
         onPress={onPress}
         onLongPress={onLongPress}
@@ -53,3 +63,4 @@ export const AnimatedPressable: React.FC<AnimatedPressableProps> = ({
     </Animated.View>
   );
 };
+// #endregion

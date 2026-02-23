@@ -1,8 +1,15 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Animated, Easing, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  Easing,
+} from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import type { ThemeColors } from '../types/theme';
@@ -29,35 +36,32 @@ const AnimatedSettingsItem: React.FC<AnimatedSettingsItemProps> = ({
   onPress,
   colors,
 }) => {
-  const buttonScale = useRef(new Animated.Value(1)).current;
+  const buttonScale = useSharedValue(1);
 
   const animatePressIn = () => {
-    Animated.spring(buttonScale, {
-      toValue: 0.98,
-      useNativeDriver: true,
-      speed: 30,
-      bounciness: 0,
-    }).start();
+    buttonScale.value = withSpring(0.98, { damping: 20, stiffness: 400 });
   };
 
   const animatePressOut = () => {
-    Animated.timing(buttonScale, {
-      toValue: 1,
+    buttonScale.value = withTiming(1, {
       duration: 220,
       easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
+    });
   };
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: buttonScale.value }],
+  }));
+
   return (
-    <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+    <Animated.View style={animatedStyle}>
       <Pressable
         className={`flex-row items-center justify-between px-4 py-4`}
         onPress={() => onPress?.()}
         onPressIn={animatePressIn}
         onPressOut={animatePressOut}
       >
-        <Text className="text-base" style={{ color: colors.text }}>{label}</Text>
+        <Text className="text-base font-l_regular" style={{ color: colors.text }}>{label}</Text>
         <Feather name="chevron-right" size={20} color={colors.textSecondary} />
       </Pressable>
     </Animated.View>
@@ -100,11 +104,11 @@ export const SettingsScreen: React.FC = () => {
 
   return (
     <View className="flex-1 px-6 py-8 overflow-y-auto" style={{ backgroundColor: colors.background }}>
-      <Text className="mb-4 text-3xl font-bold" style={{ color: colors.text }}>{t('settings.title')}</Text>
+      <Text className="mb-4 text-3xl font-l_semibold" style={{ color: colors.text }}>{t('settings.title')}</Text>
 
       {settingsSections.map((section) => (
         <View key={section.title} className="mb-5">
-          <Text className="mb-3 text-base font-semibold" style={{ color: colors.textSecondary }}>{section.title}</Text>
+          <Text className="mb-3 text-base font-l_semibold" style={{ color: colors.textSecondary }}>{section.title}</Text>
 
           <Card className="rounded-2xl p-0" themeColors={colors}>
             {section.items.map((item) => (

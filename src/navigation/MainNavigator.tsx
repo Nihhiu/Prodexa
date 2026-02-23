@@ -1,3 +1,4 @@
+// #region Imports
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
@@ -22,18 +23,24 @@ import {
 import { BottomNavigationBar, TabKey } from '../components/common/BottomNavigationBar';
 import { RootStackParamList } from './types';
 import { useTheme } from '../hooks/useTheme';
+// #endregion
 
+// #region Constants
 const tabs: TabKey[] = ['home', 'dashboard', 'settings'];
 const Stack = createStackNavigator<RootStackParamList>();
+// #endregion
 
+// #region Main tabs
 const MainTabsScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('home');
   const scrollRef = useRef<ScrollView>(null);
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
 
+  // Resolve o índice atual da tab para navegação horizontal por página.
   const getTabIndex = (tab: TabKey) => tabs.indexOf(tab);
 
+  // Atualiza tab ativa e desloca o ScrollView para a página correspondente.
   const handleTabChange = (tab: TabKey) => {
     const targetIndex = getTabIndex(tab);
 
@@ -47,6 +54,7 @@ const MainTabsScreen: React.FC = () => {
   const handleMomentumScrollEnd = (event: {
     nativeEvent: { contentOffset: { x: number } };
   }) => {
+    // Sincroniza a tab ativa após gesto de swipe horizontal.
     const index = Math.round(event.nativeEvent.contentOffset.x / width);
     const nextTab = tabs[index];
 
@@ -56,6 +64,7 @@ const MainTabsScreen: React.FC = () => {
   };
 
   useEffect(() => {
+    // Reposiciona o conteúdo quando a largura muda (ex.: rotação).
     const activeIndex = getTabIndex(activeTab);
     scrollRef.current?.scrollTo({ x: activeIndex * width, animated: false });
   }, [activeTab, width]);
@@ -87,11 +96,14 @@ const MainTabsScreen: React.FC = () => {
     </View>
   );
 };
+// #endregion
 
+// #region Root navigator
 export const MainNavigator: React.FC = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
+  // Mapeia tokens de tema interno para o tema esperado pelo React Navigation.
   const navigationTheme = {
     ...DefaultTheme,
     colors: {
@@ -108,8 +120,13 @@ export const MainNavigator: React.FC = () => {
   const screenOptions = {
     headerStyle: { backgroundColor: colors.surface },
     headerTintColor: colors.text,
-    headerTitleStyle: { color: colors.text },
+    headerTitleStyle: {
+      color: colors.text,
+      fontFamily: 'Lexend_600SemiBold',
+    },
     cardStyle: { backgroundColor: colors.background },
+    detachPreviousScreen: false,
+    cardOverlayEnabled: true,
   };
 
   const settingsDetailScreenOptions = {
@@ -166,3 +183,4 @@ export const MainNavigator: React.FC = () => {
     </NavigationContainer>
   );
 };
+// #endregion

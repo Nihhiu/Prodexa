@@ -1,7 +1,6 @@
-import React, { useRef } from 'react';
+// #region Imports
+import React from 'react';
 import {
-  Animated,
-  Easing,
   Modal,
   Platform,
   Pressable,
@@ -9,6 +8,13 @@ import {
   Text,
   View,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  runOnJS,
+  Easing,
+} from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 
@@ -18,7 +24,9 @@ import {
 } from '../../../i18n';
 import type { ThemeColors } from '../../../types/theme';
 import { AnimatedPressable } from './AnimatedPressable';
+// #endregion
 
+// #region Types and constants
 interface LanguagePickerModalProps {
   visible: boolean;
   colors: ThemeColors;
@@ -29,7 +37,9 @@ interface LanguagePickerModalProps {
 }
 
 const POPUP_ANIMATION_DURATION_MS = 200;
+// #endregion
 
+// #region Component
 export const LanguagePickerModal: React.FC<LanguagePickerModalProps> = ({
   visible,
   colors,
@@ -39,72 +49,61 @@ export const LanguagePickerModal: React.FC<LanguagePickerModalProps> = ({
   t,
 }) => {
   const [shouldRender, setShouldRender] = React.useState(visible);
-  const overlayOpacity = useRef(new Animated.Value(0)).current;
-  const cardScale = useRef(new Animated.Value(0.98)).current;
-  const cardOpacity = useRef(new Animated.Value(0)).current;
+  const overlayOpacity = useSharedValue(0);
+  const cardScale = useSharedValue(0.98);
+  const cardOpacity = useSharedValue(0);
 
+  // Controla desmontagem apenas após animação de fechamento terminar.
   React.useEffect(() => {
     if (visible) {
       setShouldRender(true);
       return;
     }
 
-    Animated.parallel([
-      Animated.timing(overlayOpacity, {
-        toValue: 0,
-        duration: POPUP_ANIMATION_DURATION_MS,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(cardOpacity, {
-        toValue: 0,
-        duration: POPUP_ANIMATION_DURATION_MS,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(cardScale, {
-        toValue: 0.98,
-        duration: POPUP_ANIMATION_DURATION_MS,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start(({ finished }) => {
-      if (finished) setShouldRender(false);
+    const timingConfig = {
+      duration: POPUP_ANIMATION_DURATION_MS,
+      easing: Easing.out(Easing.cubic),
+    };
+
+    overlayOpacity.value = withTiming(0, timingConfig);
+    cardOpacity.value = withTiming(0, timingConfig);
+    cardScale.value = withTiming(0.98, timingConfig, (finished) => {
+      if (finished) {
+        runOnJS(setShouldRender)(false);
+      }
     });
-  }, [visible, overlayOpacity, cardOpacity, cardScale]);
+  }, [visible]);
 
   React.useEffect(() => {
+    // Inicializa estado visual e executa animação de entrada do modal.
     if (!visible || !shouldRender) return;
 
-    overlayOpacity.setValue(0);
-    cardOpacity.setValue(0);
-    cardScale.setValue(0.98);
+    overlayOpacity.value = 0;
+    cardOpacity.value = 0;
+    cardScale.value = 0.98;
 
     const timer = setTimeout(() => {
-      Animated.parallel([
-        Animated.timing(overlayOpacity, {
-          toValue: 1,
-          duration: POPUP_ANIMATION_DURATION_MS,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }),
-        Animated.timing(cardOpacity, {
-          toValue: 1,
-          duration: POPUP_ANIMATION_DURATION_MS,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }),
-        Animated.timing(cardScale, {
-          toValue: 1,
-          duration: POPUP_ANIMATION_DURATION_MS,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }),
-      ]).start();
+      const timingConfig = {
+        duration: POPUP_ANIMATION_DURATION_MS,
+        easing: Easing.out(Easing.cubic),
+      };
+
+      overlayOpacity.value = withTiming(1, timingConfig);
+      cardOpacity.value = withTiming(1, timingConfig);
+      cardScale.value = withTiming(1, timingConfig);
     }, 0);
 
     return () => clearTimeout(timer);
-  }, [visible, shouldRender, overlayOpacity, cardOpacity, cardScale]);
+  }, [visible, shouldRender]);
+
+  const overlayStyle = useAnimatedStyle(() => ({
+    opacity: overlayOpacity.value,
+  }));
+
+  const cardStyle = useAnimatedStyle(() => ({
+    opacity: cardOpacity.value,
+    transform: [{ scale: cardScale.value }],
+  }));
 
   if (!shouldRender) return null;
 
@@ -117,12 +116,14 @@ export const LanguagePickerModal: React.FC<LanguagePickerModalProps> = ({
       onRequestClose={onClose}
     >
       <Animated.View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          paddingHorizontal: 20,
-          opacity: overlayOpacity,
-        }}
+        style={[
+          {
+            flex: 1,
+            justifyContent: 'center',
+            paddingHorizontal: 20,
+          },
+          overlayStyle,
+        ]}
       >
         <BlurView
           intensity={22}
@@ -137,12 +138,7 @@ export const LanguagePickerModal: React.FC<LanguagePickerModalProps> = ({
         />
         <Pressable onPress={onClose} style={StyleSheet.absoluteFillObject} />
 
-        <Animated.View
-          style={{
-            opacity: cardOpacity,
-            transform: [{ scale: cardScale }],
-          }}
-        >
+        <Animated.View style={cardStyle}>
           <Pressable
             onPress={(event) => event.stopPropagation()}
             style={{
@@ -153,7 +149,7 @@ export const LanguagePickerModal: React.FC<LanguagePickerModalProps> = ({
               padding: 16,
             }}
           >
-            <Text className="text-lg font-semibold" style={{ color: colors.text }}>
+            <Text className="text-lg font-l_semibold" style={{ color: colors.text }}>
               {t('appearance.languagePickerTitle')}
             </Text>
             <Text className="mt-1 text-sm" style={{ color: colors.textSecondary }}>
@@ -181,7 +177,7 @@ export const LanguagePickerModal: React.FC<LanguagePickerModalProps> = ({
                     }}
                   >
                     <Text
-                      className="text-base font-medium"
+                      className="text-base font-l_medium"
                       style={{ color: selected ? colors.primary : colors.text }}
                     >
                       {t(`appearance.languageOptions.${preference}`)}
@@ -197,3 +193,4 @@ export const LanguagePickerModal: React.FC<LanguagePickerModalProps> = ({
     </Modal>
   );
 };
+// #endregion

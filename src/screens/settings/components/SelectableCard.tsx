@@ -1,75 +1,72 @@
-import React, { useRef } from 'react';
-import { Animated, Easing, Pressable, View } from 'react-native';
+// #region Imports
+import React, { useEffect } from 'react';
+import { Pressable, View } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  interpolate,
+  Easing,
+} from 'react-native-reanimated';
 
 import type { ThemeColors } from '../../../types/theme';
+// #endregion
 
+// #region Types
 interface SelectableCardProps {
   selected: boolean;
   onPress: () => void;
   colors: ThemeColors;
   children: React.ReactNode;
 }
+// #endregion
 
+// #region Component
 export const SelectableCard: React.FC<SelectableCardProps> = ({
   selected,
   onPress,
   colors,
   children,
 }) => {
-  const scale = useRef(new Animated.Value(1)).current;
-  const selectedProgress = useRef(new Animated.Value(selected ? 1 : 0)).current;
+  const scale = useSharedValue(1);
+  const selectedProgress = useSharedValue(selected ? 1 : 0);
 
-  React.useEffect(() => {
-    Animated.timing(selectedProgress, {
-      toValue: selected ? 1 : 0,
+  // Progresso visual para estado selecionado (borda/escala/opacidade).
+  useEffect(() => {
+    selectedProgress.value = withTiming(selected ? 1 : 0, {
       duration: 180,
       easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  }, [selected, selectedProgress]);
+    });
+  }, [selected]);
 
   const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 0.96,
-      useNativeDriver: true,
-      speed: 30,
-      bounciness: 0,
-    }).start();
+    scale.value = withSpring(0.96, { damping: 20, stiffness: 400 });
   };
 
   const handlePressOut = () => {
-    Animated.timing(scale, {
-      toValue: 1,
+    scale.value = withTiming(1, {
       duration: 200,
       easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
+    });
   };
 
+  const animatedStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(selectedProgress.value, [0, 1], [0.96, 1]);
+    const selectedScale = interpolate(selectedProgress.value, [0, 1], [1, 1.012]);
+    const translateY = interpolate(selectedProgress.value, [0, 1], [0, -2]);
+
+    return {
+      opacity,
+      transform: [
+        { scale: scale.value * selectedScale },
+        { translateY },
+      ],
+    };
+  });
+
   return (
-    <Animated.View
-      style={{
-        opacity: selectedProgress.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0.96, 1],
-        }),
-        transform: [
-          { scale },
-          {
-            scale: selectedProgress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [1, 1.012],
-            }),
-          },
-          {
-            translateY: selectedProgress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, -2],
-            }),
-          },
-        ],
-      }}
-    >
+    <Animated.View style={animatedStyle}>
       <Pressable
         onPress={onPress}
         onPressIn={handlePressIn}
@@ -87,3 +84,4 @@ export const SelectableCard: React.FC<SelectableCardProps> = ({
     </Animated.View>
   );
 };
+// #endregion

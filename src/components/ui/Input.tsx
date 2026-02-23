@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, TextInput, View } from 'react-native';
+import { useTheme } from '../../hooks/useTheme';
 
 interface InputProps {
   label?: string;
@@ -24,13 +25,18 @@ export const Input = ({
   multiline = false,
   numberOfLines = 1,
 }: InputProps) => {
+  const { colors } = useTheme();
+
   return (
     <View className="w-full gap-2">
-      {label && <Text className="font-semibold text-gray-700">{label}</Text>}
+      {label && <Text className="font-l_semibold" style={{ color: colors.text }}>{label}</Text>}
       <TextInput
-        className={`rounded-lg border-2 px-4 py-3 text-base ${
-          error ? 'border-red-500' : 'border-gray-300'
-        } ${!editable ? 'bg-gray-100' : 'bg-white'}`}
+        className="rounded-lg border-2 px-4 py-3 text-base"
+        style={{
+          color: colors.text,
+          borderColor: error ? colors.accent : colors.surfaceBorder,
+          backgroundColor: editable ? colors.surface : colors.background,
+        }}
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
@@ -38,9 +44,9 @@ export const Input = ({
         editable={editable}
         multiline={multiline}
         numberOfLines={numberOfLines}
-        placeholderTextColor="#999"
+        placeholderTextColor={colors.textSecondary}
       />
-      {error && <Text className="text-sm text-red-600">{error}</Text>}
+      {error && <Text className="text-sm" style={{ color: colors.accent }}>{error}</Text>}
     </View>
   );
 };

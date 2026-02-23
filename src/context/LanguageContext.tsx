@@ -1,4 +1,11 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   applyLanguagePreference,
   initI18n,
@@ -29,6 +36,17 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
   const [language, setLanguageState] = useState<LanguageCode>('pt');
   const [languagePreference, setLanguagePreferenceState] =
     useState<LanguagePreference>('system');
+  const languageRef = useRef<LanguageCode>('pt');
+  const languagePreferenceRef = useRef<LanguagePreference>('system');
+  const requestIdRef = useRef(0);
+
+  useEffect(() => {
+    languageRef.current = language;
+  }, [language]);
+
+  useEffect(() => {
+    languagePreferenceRef.current = languagePreference;
+  }, [languagePreference]);
 
   useEffect(() => {
     let active = true;
@@ -47,23 +65,40 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const setLanguagePreference = useCallback((preference: LanguagePreference) => {
     if (!LANGUAGE_PREFERENCES.includes(preference)) return;
+    if (preference === languagePreferenceRef.current) return;
 
-    applyLanguagePreference(preference).then((resolvedLanguage) => {
-      setLanguageState(resolvedLanguage);
-      setLanguagePreferenceState(preference);
-    });
+    const previousPreference = languagePreferenceRef.current;
+    const requestId = ++requestIdRef.current;
+
+    setLanguagePreferenceState(preference);
+
+    void applyLanguagePreference(preference)
+      .then((resolvedLanguage) => {
+        if (requestId !== requestIdRef.current) return;
+        setLanguageState(resolvedLanguage);
+      })
+      .catch(() => {
+        if (requestId !== requestIdRef.current) return;
+        setLanguagePreferenceState(previousPreference);
+        setLanguageState(languageRef.current);
+      });
   }, []);
+
+  const value = useMemo<LanguageContextValue>(
+    () => ({
+      language,
+      languagePreference,
+      setLanguagePreference,
+      ready,
+    }),
+    [language, languagePreference, setLanguagePreference, ready],
+  );
 
   if (!ready) return null;
 
   return (
     <LanguageContext.Provider
-      value={{
-        language,
-        languagePreference,
-        setLanguagePreference,
-        ready,
-      }}
+      value={value}
     >
       {children}
     </LanguageContext.Provider>
