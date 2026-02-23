@@ -1,5 +1,12 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  Easing,
+} from 'react-native-reanimated';
 import { useTheme } from '../../hooks/useTheme';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'outline';
@@ -29,6 +36,22 @@ export const Button = ({
   icon,
 }: ButtonProps) => {
   const { colors } = useTheme();
+  const scale = useSharedValue(1);
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.96, { damping: 20, stiffness: 400 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withTiming(1, {
+      duration: 180,
+      easing: Easing.out(Easing.cubic),
+    });
+  };
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   const styleByVariant: Record<ButtonVariant, { backgroundColor?: string; borderColor?: string; borderWidth?: number }> = {
     primary: { backgroundColor: colors.primary },
@@ -40,16 +63,20 @@ export const Button = ({
   const labelColor = variant === 'outline' ? colors.primary : colors.primaryText;
 
   return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      className={`flex-row items-center justify-center rounded-lg ${sizeStyles[size]} ${disabled ? 'opacity-50' : ''}`}
-      style={styleByVariant[variant]}
-    >
-      <View className="flex-row items-center gap-2">
-        {icon && icon}
-        <Text className="font-l_semibold" style={{ color: labelColor }}>{label}</Text>
-      </View>
-    </Pressable>
+    <Animated.View style={animatedStyle}>
+      <Pressable
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={disabled}
+        className={`flex-row items-center justify-center rounded-lg ${sizeStyles[size]} ${disabled ? 'opacity-50' : ''}`}
+        style={styleByVariant[variant]}
+      >
+        <View className="flex-row items-center gap-2">
+          {icon && icon}
+          <Text className="font-l_semibold" style={{ color: labelColor }}>{label}</Text>
+        </View>
+      </Pressable>
+    </Animated.View>
   );
 };

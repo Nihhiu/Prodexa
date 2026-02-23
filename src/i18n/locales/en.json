@@ -9,12 +9,42 @@
     "error": "Error",
     "success": "Success"
   },
+  "dashboard": {
+    "shoppingList": "Shopping List",
+    "shoppingListDescription": "Manage your shopping items"
+  },
+  "shoppingList": {
+    "title": "Shopping List",
+    "addItem": "Add Item",
+    "name": "Name",
+    "namePlaceholder": "e.g. Milk",
+    "quantity": "Quantity",
+    "quantityPlaceholder": "e.g. 2",
+    "store": "Store",
+    "storePlaceholder": "e.g. Lidl",
+    "price": "Price",
+    "pricePlaceholder": "e.g. 2.50",
+    "add": "Add",
+    "emptyList": "No items yet",
+    "emptyListDescription": "Tap + to add your first item",
+    "shoppingMode": "Shopping Mode",
+    "shoppingModeHint": "Tap items to mark them as purchased",
+    "exitShoppingMode": "Finish Shopping",
+    "removeChecked": "Remove purchased items?",
+    "removeCheckedDescription": "Items you checked will be removed from the list.",
+    "noItemsToShop": "No items to shop",
+    "noItemsToShopDescription": "Add items to the list before starting shopping mode.",
+    "deleteItem": "Delete item?",
+    "deleteItemDescription": "This item will be permanently removed from the list.",
+    "delete": "Delete"
+  },
   "settings": {
     "title": "Settings",
     "sections": {
       "settings": "Settings",
       "support": "Support",
-      "privacy": "Privacy"
+      "privacy": "Privacy",
+      "about": "About"
     },
     "general": "General",
     "appearance": "Appearance",
@@ -23,10 +53,14 @@
     "listenMusic": "Listen to Music",
     "otherLinks": "Other Links",
     "privacyPolicy": "Privacy Policy",
-    "storage": "Storage"
+    "storage": "Storage",
+    "about": "About"
   },
   "general": {
     "title": "General",
+    "profile": "Profile",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. Naegi Makoto",
     "language": "Language",
     "languageDescription": "Choose the app language",
     "languages": {
@@ -35,6 +69,7 @@
     }
   },
   "appearance": {
+    "title": "Appearance",
     "language": "Language",
     "languageDescription": "Choose the app language",
     "languagePickerTitle": "Select language",
@@ -66,16 +101,13 @@
   "watchAds": {
     "title": "Watch Ads"
   },
-  "listenMusic": {
-    "title": "Listen to Music"
-  },
-  "otherLinks": {
-    "title": "Other Links"
-  },
   "privacyPolicy": {
     "title": "Privacy Policy"
   },
   "storageScreen": {
     "title": "Storage"
+  },
+  "about": {
+    "title": "About"
   }
 }

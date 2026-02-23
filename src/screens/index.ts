@@ -6,8 +6,8 @@ export {
 	AppearanceScreen,
 	NotificationsScreen,
 	WatchAdsScreen,
-	ListenMusicScreen,
-	OtherLinksScreen,
 	PrivacyPolicyScreen,
 	StorageScreen,
+	AboutScreen,
 } from './settings';
+export { ShoppingListScreen } from './dashboard';

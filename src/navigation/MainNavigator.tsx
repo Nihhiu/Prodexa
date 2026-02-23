@@ -15,10 +15,10 @@ import {
   AppearanceScreen,
   NotificationsScreen,
   WatchAdsScreen,
-  ListenMusicScreen,
-  OtherLinksScreen,
+  AboutScreen,
   PrivacyPolicyScreen,
   StorageScreen,
+  ShoppingListScreen,
 } from '../screens';
 import { BottomNavigationBar, TabKey } from '../components/common/BottomNavigationBar';
 import { RootStackParamList } from './types';
@@ -71,28 +71,28 @@ const MainTabsScreen: React.FC = () => {
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <View className="flex-1">
-        <ScrollView
-          ref={scrollRef}
-          horizontal
-          pagingEnabled
-          bounces={false}
-          showsHorizontalScrollIndicator={false}
-          onMomentumScrollEnd={handleMomentumScrollEnd}
-          contentOffset={{ x: getTabIndex(activeTab) * width, y: 0 }}
-        >
-          <View style={{ width }} className="flex-1">
-            <HomeScreen />
-          </View>
-          <View style={{ width }} className="flex-1">
-            <DashboardScreen />
-          </View>
-          <View style={{ width }} className="flex-1">
-            <SettingsScreen />
-          </View>
-        </ScrollView>
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        pagingEnabled
+        bounces={false}
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        contentOffset={{ x: getTabIndex(activeTab) * width, y: 0 }}
+      >
+        <View style={{ width }} className="flex-1">
+          <HomeScreen />
+        </View>
+        <View style={{ width }} className="flex-1">
+          <DashboardScreen />
+        </View>
+        <View style={{ width }} className="flex-1">
+          <SettingsScreen />
+        </View>
+      </ScrollView>
+      <View className="absolute bottom-0 left-0 right-0" pointerEvents="box-none">
+        <BottomNavigationBar activeTab={activeTab} onTabChange={handleTabChange} />
       </View>
-      <BottomNavigationBar activeTab={activeTab} onTabChange={handleTabChange} />
     </View>
   );
 };
@@ -142,42 +142,42 @@ export const MainNavigator: React.FC = () => {
         <Stack.Screen
           name="GeneralSettings"
           component={GeneralSettingsScreen}
-          options={{ title: t('settings.general'), ...settingsDetailScreenOptions }}
+          options={{ headerShown: false, ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="Appearance"
           component={AppearanceScreen}
-          options={{ title: t('settings.appearance'), ...settingsDetailScreenOptions }}
+          options={{ headerShown: false, ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="Notifications"
           component={NotificationsScreen}
-          options={{ title: t('settings.notifications'), ...settingsDetailScreenOptions }}
+          options={{ headerShown: false, ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="WatchAds"
           component={WatchAdsScreen}
-          options={{ title: t('settings.watchAds'), ...settingsDetailScreenOptions }}
+          options={{ headerShown: false, ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
-          name="ListenMusic"
-          component={ListenMusicScreen}
-          options={{ title: t('settings.listenMusic'), ...settingsDetailScreenOptions }}
-        />
-        <Stack.Screen
-          name="OtherLinks"
-          component={OtherLinksScreen}
-          options={{ title: t('settings.otherLinks'), ...settingsDetailScreenOptions }}
+          name="About"
+          component={AboutScreen}
+          options={{ headerShown: false, ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="PrivacyPolicy"
           component={PrivacyPolicyScreen}
-          options={{ title: t('settings.privacyPolicy'), ...settingsDetailScreenOptions }}
+          options={{ headerShown: false, ...settingsDetailScreenOptions }}
         />
         <Stack.Screen
           name="Storage"
           component={StorageScreen}
-          options={{ title: t('settings.storage'), ...settingsDetailScreenOptions }}
+          options={{ headerShown: false, ...settingsDetailScreenOptions }}
+        />
+        <Stack.Screen
+          name="ShoppingList"
+          component={ShoppingListScreen}
+          options={{ headerShown: false, ...settingsDetailScreenOptions }}
         />
       </Stack.Navigator>
     </NavigationContainer>

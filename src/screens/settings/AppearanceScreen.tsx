@@ -1,14 +1,11 @@
 // #region Imports
 import React, { useRef } from 'react';
 import {
-  Alert,
   Animated,
   Easing,
-  Platform,
   Pressable,
   ScrollView,
   Text,
-  ToastAndroid,
   View,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -22,8 +19,10 @@ import type { ThemeTime } from '../../types/theme';
 import {
   AnimatedPressable,
   AnimatedSelectionIcon,
+  ImportFeedbackModal,
   ImportCard,
   LanguagePickerModal,
+  ScreenHeader,
   SelectableCard,
   TimeOptionCard,
 } from './components';
@@ -57,6 +56,17 @@ export const AppearanceScreen: React.FC = () => {
   const { languagePreference, setLanguagePreference } = useLanguage();
   const { t } = useTranslation();
   const [isLanguagePickerOpen, setIsLanguagePickerOpen] = React.useState(false);
+  const [importFeedback, setImportFeedback] = React.useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+    variant: 'success' | 'error' | 'info';
+  }>({
+    visible: false,
+    title: '',
+    message: '',
+    variant: 'success',
+  });
 
   // Estado otimista para feedback visual imediato durante seleção.
   // ── Optimistic selection state (instant visual feedback) ──
@@ -157,7 +167,12 @@ export const AppearanceScreen: React.FC = () => {
 
       const asset = result.assets[0];
       if (!asset?.uri) {
-        Alert.alert(t('common.error'), t('appearance.cannotReadFile'));
+        setImportFeedback({
+          visible: true,
+          title: t('common.error'),
+          message: t('appearance.cannotReadFile'),
+          variant: 'error',
+        });
         return;
       }
 
@@ -167,27 +182,47 @@ export const AppearanceScreen: React.FC = () => {
       const importResult = importThemeFromJson(rawJson);
 
       if (!importResult.success) {
-        Alert.alert(t('appearance.invalidTheme'), importResult.error);
+        setImportFeedback({
+          visible: true,
+          title: t('appearance.invalidTheme'),
+          message: importResult.error,
+          variant: 'error',
+        });
         return;
       }
 
-      Alert.alert(t('appearance.importSuccess'), t('appearance.importSuccessMessage', { name: importResult.themeName }));
+      setImportFeedback({
+        visible: true,
+        title: t('appearance.importSuccess'),
+        message: t('appearance.importSuccessMessage', { name: importResult.themeName }),
+        variant: 'success',
+      });
     } catch {
-      Alert.alert(t('common.error'), t('appearance.importError'));
+      setImportFeedback({
+        visible: true,
+        title: t('common.error'),
+        message: t('appearance.importError'),
+        variant: 'error',
+      });
     }
   };
+
+  const handleCloseImportFeedback = React.useCallback(() => {
+    setImportFeedback((current) => ({
+      ...current,
+      visible: false,
+    }));
+  }, []);
 
   const handleExplainRemoveCustomTheme = () => {
     didLongPressRemoveRef.current = true;
 
-    const message = t('appearance.removeImportedTheme');
-
-    if (Platform.OS === 'android') {
-      ToastAndroid.show(message, ToastAndroid.SHORT);
-      return;
-    }
-
-    Alert.alert(message);
+    setImportFeedback({
+      visible: true,
+      title: t('appearance.removeImportedTheme'),
+      message: t('appearance.removeImportedHint'),
+      variant: 'info',
+    });
   };
 
   const handlePressRemoveCustomTheme = () => {
@@ -246,18 +281,18 @@ export const AppearanceScreen: React.FC = () => {
   const customThemeSelected = customThemeId != null && optimisticThemeId === customThemeId;
 
   return (
-    <ScrollView
-      className="flex-1"
-      style={{ backgroundColor: colors.background }}
-      contentContainerStyle={{
-        flexGrow: 1,
-        backgroundColor: colors.background,
-        paddingHorizontal: 16,
-        paddingTop: 16,
-        paddingBottom: 40,
-      }}
-    >
-      {/* ── Language selector ─────────────────────────── */}
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+      <ScreenHeader title={t('appearance.title')} />
+      <ScrollView
+        className="flex-1 px-4 pt-4 pb-12"
+        style={{ backgroundColor: colors.background }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          backgroundColor: colors.background
+        }}
+        overScrollMode="always"
+      >
+        {/* ── Language selector ─────────────────────────── */}
       <View className="mb-8">
         <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
           {t('appearance.language')}
@@ -487,7 +522,18 @@ export const AppearanceScreen: React.FC = () => {
         onClose={() => setIsLanguagePickerOpen(false)}
         t={t}
       />
-    </ScrollView>
+
+      <ImportFeedbackModal
+        visible={importFeedback.visible}
+        colors={colors}
+        title={importFeedback.title}
+        message={importFeedback.message}
+        variant={importFeedback.variant}
+        onClose={handleCloseImportFeedback}
+        t={t}
+      />
+      </ScrollView>
+    </View>
   );
 };
 // #endregion

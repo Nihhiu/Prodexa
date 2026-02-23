@@ -12,6 +12,8 @@ interface InputProps {
   error?: string;
   multiline?: boolean;
   numberOfLines?: number;
+  inputClassName?: string;
+  backgroundTone?: 'surface' | 'background';
 }
 
 export const Input = ({
@@ -24,18 +26,22 @@ export const Input = ({
   error,
   multiline = false,
   numberOfLines = 1,
+  inputClassName = '',
+  backgroundTone = 'surface',
 }: InputProps) => {
   const { colors } = useTheme();
+  const editableBackgroundColor =
+    backgroundTone === 'background' ? colors.background : colors.surface;
 
   return (
     <View className="w-full gap-2">
       {label && <Text className="font-l_semibold" style={{ color: colors.text }}>{label}</Text>}
       <TextInput
-        className="rounded-lg border-2 px-4 py-3 text-base"
+        className={`rounded-lg border-2 px-4 py-3 text-base  ${inputClassName}`}
         style={{
           color: colors.text,
           borderColor: error ? colors.accent : colors.surfaceBorder,
-          backgroundColor: editable ? colors.surface : colors.background,
+          backgroundColor: editable ? editableBackgroundColor : colors.background,
         }}
         placeholder={placeholder}
         value={value}

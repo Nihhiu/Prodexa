@@ -9,12 +9,42 @@
     "error": "Erro",
     "success": "Sucesso"
   },
+  "dashboard": {
+    "shoppingList": "Lista de Compras",
+    "shoppingListDescription": "Gerir os itens de compras"
+  },
+  "shoppingList": {
+    "title": "Lista de Compras",
+    "addItem": "Adicionar Item",
+    "name": "Nome",
+    "namePlaceholder": "ex: Leite",
+    "quantity": "Quantidade",
+    "quantityPlaceholder": "ex: 2",
+    "store": "Loja",
+    "storePlaceholder": "ex: Lidl",
+    "price": "Preço",
+    "pricePlaceholder": "ex: 2.50",
+    "add": "Adicionar",
+    "emptyList": "Sem itens",
+    "emptyListDescription": "Toque + para adicionar o primeiro item",
+    "shoppingMode": "Modo Compras",
+    "shoppingModeHint": "Toque nos itens para marcá-los como comprados",
+    "exitShoppingMode": "Terminar Compras",
+    "removeChecked": "Remover itens comprados?",
+    "removeCheckedDescription": "Os itens marcados serão removidos da lista.",
+    "noItemsToShop": "Sem itens para comprar",
+    "noItemsToShopDescription": "Adicione itens à lista antes de iniciar o modo compras.",
+    "deleteItem": "Eliminar item?",
+    "deleteItemDescription": "Este item será removido permanentemente da lista.",
+    "delete": "Eliminar"
+  },
   "settings": {
     "title": "Definições",
     "sections": {
       "settings": "Configurações",
       "support": "Apoiar",
-      "privacy": "Privacidade"
+      "privacy": "Privacidade",
+      "about": "Sobre"
     },
     "general": "Geral",
     "appearance": "Aparência",
@@ -23,10 +53,14 @@
     "listenMusic": "Ouvir Música",
     "otherLinks": "Outros Links",
     "privacyPolicy": "Política de Privacidade",
-    "storage": "Armazenamento"
+    "storage": "Armazenamento",
+    "about": "Sobre"
   },
   "general": {
     "title": "Geral",
+    "profile": "Perfil",
+    "nameLabel": "Nome",
+    "namePlaceholder": "ex: Naegi Makoto",
     "language": "Idioma",
     "languageDescription": "Escolher o idioma da aplicação",
     "languages": {
@@ -35,6 +69,7 @@
     }
   },
   "appearance": {
+    "title": "Aparência",
     "language": "Idioma",
     "languageDescription": "Escolher o idioma da aplicação",
     "languagePickerTitle": "Selecionar idioma",
@@ -66,16 +101,13 @@
   "watchAds": {
     "title": "Assistir Publicidade"
   },
-  "listenMusic": {
-    "title": "Ouvir Música"
-  },
-  "otherLinks": {
-    "title": "Outros Links"
-  },
   "privacyPolicy": {
     "title": "Política de Privacidade"
   },
   "storageScreen": {
     "title": "Armazenamento"
+  },
+  "about": {
+    "title": "Sobre"
   }
 }

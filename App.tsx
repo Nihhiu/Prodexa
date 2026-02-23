@@ -6,6 +6,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { MainNavigator } from 'src/navigation';
 import { ThemeProvider } from 'src/context/ThemeContext';
 import { LanguageProvider } from 'src/context/LanguageContext';
+import { UserProvider } from 'src/context/UserContext';
 import { useTheme } from 'src/hooks/useTheme';
 import {
   useFonts,
@@ -58,10 +59,12 @@ export default function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <SafeAreaProvider>
-          <MainNavigator />
-          <ThemedStatusBar />
-        </SafeAreaProvider>
+        <UserProvider>
+          <SafeAreaProvider>
+            <MainNavigator />
+            <ThemedStatusBar />
+          </SafeAreaProvider>
+        </UserProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

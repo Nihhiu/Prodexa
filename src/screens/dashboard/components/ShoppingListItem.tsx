@@ -1,0 +1,161 @@
+// #region Imports
+import React from 'react';
+import { Pressable, Text, View } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  Easing,
+  FadeIn,
+  FadeOut,
+} from 'react-native-reanimated';
+import { Feather } from '@expo/vector-icons';
+import { useTheme } from '../../../hooks/useTheme';
+// #endregion
+
+// #region Types
+export interface ShoppingItem {
+  id: string;
+  name: string;
+  quantity: string;
+  store: string;
+  price: string;
+  addedBy: string;
+}
+
+interface ShoppingListItemProps {
+  item: ShoppingItem;
+  isShoppingMode: boolean;
+  isChecked: boolean;
+  onToggleCheck: (id: string) => void;
+  onRemove: (id: string) => void;
+}
+// #endregion
+
+// #region Component
+export const ShoppingListItem: React.FC<ShoppingListItemProps> = ({
+  item,
+  isShoppingMode,
+  isChecked,
+  onToggleCheck,
+  onRemove,
+}) => {
+  const { colors } = useTheme();
+  const scale = useSharedValue(1);
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.97, { damping: 20, stiffness: 400 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withTiming(1, {
+      duration: 220,
+      easing: Easing.out(Easing.cubic),
+    });
+  };
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePress = () => {
+    if (isShoppingMode) {
+      onToggleCheck(item.id);
+    }
+  };
+
+  return (
+    <Animated.View
+      entering={FadeIn.duration(250)}
+      exiting={FadeOut.duration(200)}
+      style={animatedStyle}
+    >
+      <Pressable
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={!isShoppingMode}
+        className="mb-3 rounded-xl p-4"
+        style={{
+          backgroundColor: colors.card,
+          borderWidth: 1,
+          borderColor: isChecked ? colors.primary : colors.cardBorder,
+          opacity: isChecked ? 0.65 : 1,
+        }}
+      >
+        <View className="flex-row items-center">
+          {/* Checkbox in shopping mode */}
+          {isShoppingMode && (
+            <View className="mr-3">
+              <Feather
+                name={isChecked ? 'check-circle' : 'circle'}
+                size={24}
+                color={isChecked ? colors.primary : colors.textSecondary}
+              />
+            </View>
+          )}
+
+          {/* Item info */}
+          <View className="flex-1">
+            <Text
+              className="text-base font-l_semibold"
+              style={{
+                color: colors.text,
+                textDecorationLine: isChecked ? 'line-through' : 'none',
+              }}
+            >
+              {item.name}
+            </Text>
+            <View className="flex-row flex-wrap items-center mt-1 gap-3">
+              {!!item.quantity && (
+                <View className="flex-row items-center gap-1">
+                  <Feather name="hash" size={12} color={colors.textSecondary} />
+                  <Text className="text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+                    {item.quantity}
+                  </Text>
+                </View>
+              )}
+              {!!item.store && (
+                <View className="flex-row items-center gap-1">
+                  <Feather name="map-pin" size={12} color={colors.textSecondary} />
+                  <Text className="text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+                    {item.store}
+                  </Text>
+                </View>
+              )}
+              {!!item.price && (
+                <View className="flex-row items-center gap-1">
+                  <Feather name="tag" size={12} color={colors.textSecondary} />
+                  <Text className="text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+                    {item.price}€
+                  </Text>
+                </View>
+              )}
+              {!!item.addedBy && (
+                <View className="flex-row items-center gap-1">
+                  <Feather name="user" size={12} color={colors.textSecondary} />
+                  <Text className="text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+                    {item.addedBy}
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          {/* Delete button (normal mode only) */}
+          {!isShoppingMode && (
+            <Pressable
+              onPress={() => onRemove(item.id)}
+              className="p-2 rounded-lg"
+              hitSlop={8}
+            >
+              <Feather name="trash-2" size={18} color={colors.accent} />
+            </Pressable>
+          )}
+        </View>
+      </Pressable>
+    </Animated.View>
+  );
+};
+// #endregion

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View, ScrollView, Alert } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -13,13 +13,14 @@ import Animated, {
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import type { ThemeColors } from '../types/theme';
+import { Linking } from 'react-native';
 
 import { Card } from '../components/ui';
 import { RootStackParamList } from '../navigation';
 
 interface SectionData {
   title: string;
-  items: { 
+  items: {
     label: string,
     onPress?: () => void;
   }[];
@@ -86,9 +87,24 @@ export const SettingsScreen: React.FC = () => {
       {
         title: t('settings.sections.support'),
         items: [
-          { label: t('settings.watchAds'), onPress: () => navigation.navigate('WatchAds') },
-          { label: t('settings.listenMusic'), onPress: () => navigation.navigate('ListenMusic') },
-          { label: t('settings.otherLinks'), onPress: () => navigation.navigate('OtherLinks') },
+          { label: t('settings.listenMusic'), onPress: async () => {
+                try {
+                  const artistId = '4ubtVII1pwoqVC5DuVPUPT';
+                  await Linking.openURL(`spotify:artist:${artistId}`);
+                } catch (error) {
+                  Alert.alert(t('common.error'), t('common.unexpectedError'));
+                }
+              },
+          },
+          { label: t('settings.otherLinks'), onPress: async () => {
+                try {
+                  const linktreeUrl = 'https://linktr.ee/nihhiu';
+                  await Linking.openURL(linktreeUrl);
+                } catch (error) {
+                  Alert.alert(t('common.error'), t('common.unexpectedError'));
+                }
+              },
+          },
         ],
       },
       {
@@ -98,19 +114,33 @@ export const SettingsScreen: React.FC = () => {
           { label: t('settings.storage'), onPress: () => navigation.navigate('Storage') },
         ],
       },
+      {
+        title: t('settings.sections.about'),
+        items: [
+          { label: t('settings.about'), onPress: () => navigation.navigate('About') },
+        ],
+      },
     ],
     [navigation, t],
   );
 
   return (
-    <View className="flex-1 px-6 py-8 overflow-y-auto" style={{ backgroundColor: colors.background }}>
+    <ScrollView
+      className="flex-1 px-4 pt-12"
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={{
+        backgroundColor: colors.background,
+        paddingBottom: 120
+      }}
+      overScrollMode="always"
+    >
       <Text className="mb-4 text-3xl font-l_semibold" style={{ color: colors.text }}>{t('settings.title')}</Text>
 
       {settingsSections.map((section) => (
         <View key={section.title} className="mb-5">
           <Text className="mb-3 text-base font-l_semibold" style={{ color: colors.textSecondary }}>{section.title}</Text>
 
-          <Card className="rounded-2xl p-0" themeColors={colors}>
+          <Card className="rounded-2xl ml-4 p-0" themeColors={colors}>
             {section.items.map((item) => (
               <AnimatedSettingsItem
                 key={item.label}
@@ -122,6 +152,6 @@ export const SettingsScreen: React.FC = () => {
           </Card>
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 };

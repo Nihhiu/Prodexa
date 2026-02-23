@@ -172,7 +172,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   }));
 
   return (
-    <View style={{ backgroundColor: colors.background }} className="px-4 pb-4 pt-2">
+    <View className="px-4 pb-4 pt-2">
       <View
         className="self-center rounded-2xl py-2 shadow-md"
         style={{
