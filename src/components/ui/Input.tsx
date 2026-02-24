@@ -41,7 +41,7 @@ export const Input = ({
         style={{
           color: colors.text,
           borderColor: error ? colors.accent : colors.surfaceBorder,
-          backgroundColor: editable ? editableBackgroundColor : colors.background,
+          backgroundColor: editable ? editableBackgroundColor + '80' : colors.background + '80',
         }}
         placeholder={placeholder}
         value={value}

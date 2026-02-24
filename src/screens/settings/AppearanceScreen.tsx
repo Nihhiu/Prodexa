@@ -1,9 +1,6 @@
 // #region Imports
-import React, { useRef } from 'react';
+import React from 'react';
 import {
-  Animated,
-  Easing,
-  Pressable,
   ScrollView,
   Text,
   View,
@@ -18,12 +15,10 @@ import { useTheme } from '../../hooks/useTheme';
 import type { ThemeTime } from '../../types/theme';
 import {
   AnimatedPressable,
-  AnimatedSelectionIcon,
   ImportFeedbackModal,
-  ImportCard,
   LanguagePickerModal,
   ScreenHeader,
-  SelectableCard,
+  ThemePickerModal,
   TimeOptionCard,
 } from './components';
 // #endregion
@@ -44,6 +39,7 @@ export const AppearanceScreen: React.FC = () => {
     colors,
     themeId,
     time,
+    themeDefinition,
     availableThemes,
     availableTimes,
     setTheme,
@@ -56,6 +52,7 @@ export const AppearanceScreen: React.FC = () => {
   const { languagePreference, setLanguagePreference } = useLanguage();
   const { t } = useTranslation();
   const [isLanguagePickerOpen, setIsLanguagePickerOpen] = React.useState(false);
+  const [isThemePickerOpen, setIsThemePickerOpen] = React.useState(false);
   const [importFeedback, setImportFeedback] = React.useState<{
     visible: boolean;
     title: string;
@@ -68,35 +65,6 @@ export const AppearanceScreen: React.FC = () => {
     variant: 'success',
   });
 
-  // Estado otimista para feedback visual imediato durante seleção.
-  // ── Optimistic selection state (instant visual feedback) ──
-  const [optimisticThemeId, setOptimisticThemeId] = React.useState(themeId);
-  const [optimisticTime, setOptimisticTime] = React.useState(time);
-
-  React.useEffect(() => {
-    setOptimisticThemeId(themeId);
-  }, [themeId]);
-
-  React.useEffect(() => {
-    setOptimisticTime(time);
-  }, [time]);
-
-  const handleSelectTheme = React.useCallback(
-    (id: string) => {
-      setOptimisticThemeId(id);
-      setTheme(id);
-    },
-    [setTheme],
-  );
-
-  const handleSelectTime = React.useCallback(
-    (t: ThemeTime) => {
-      setOptimisticTime(t);
-      setTime(t);
-    },
-    [setTime],
-  );
-
   const handleSelectLanguagePreference = React.useCallback(
     (preference: LanguagePreference) => {
       setLanguagePreference(preference);
@@ -105,55 +73,12 @@ export const AppearanceScreen: React.FC = () => {
     [setLanguagePreference],
   );
 
-  const [isRemovingCustomTheme, setIsRemovingCustomTheme] = React.useState(false);
-  const didLongPressRemoveRef = useRef(false);
-
-  const customThemeVisibility = useRef(new Animated.Value(hasCustomTheme ? 1 : 0)).current;
-  const importCardVisibility = useRef(new Animated.Value(hasCustomTheme ? 0 : 1)).current;
-  const customCardScale = useRef(new Animated.Value(1)).current;
-
-  // Anima entrada/saída do card de tema importado.
-  React.useEffect(() => {
-    Animated.timing(customThemeVisibility, {
-      toValue: hasCustomTheme ? 1 : 0,
-      duration: 260,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start();
-  }, [hasCustomTheme, customThemeVisibility]);
-
-  React.useEffect(() => {
-    // Oculta cartão de importação quando já existe tema customizado ativo.
-    if (!hasCustomTheme && !isRemovingCustomTheme) {
-      importCardVisibility.setValue(1);
-      return;
-    }
-
-    Animated.timing(importCardVisibility, {
-      toValue: 0,
-      duration: 160,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  }, [hasCustomTheme, importCardVisibility, isRemovingCustomTheme]);
-
-  const handleCustomCardPressIn = () => {
-    Animated.spring(customCardScale, {
-      toValue: 0.98,
-      useNativeDriver: true,
-      speed: 26,
-      bounciness: 0,
-    }).start();
-  };
-
-  const handleCustomCardPressOut = () => {
-    Animated.timing(customCardScale, {
-      toValue: 1,
-      duration: 180,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  };
+  const handleSelectTime = React.useCallback(
+    (t: ThemeTime) => {
+      setTime(t);
+    },
+    [setTime],
+  );
 
   const handleImportTheme = async () => {
     try {
@@ -214,71 +139,25 @@ export const AppearanceScreen: React.FC = () => {
     }));
   }, []);
 
-  const handleExplainRemoveCustomTheme = () => {
-    didLongPressRemoveRef.current = true;
-
-    setImportFeedback({
-      visible: true,
-      title: t('appearance.removeImportedTheme'),
-      message: t('appearance.removeImportedHint'),
-      variant: 'info',
-    });
-  };
-
-  const handlePressRemoveCustomTheme = () => {
-    if (didLongPressRemoveRef.current) {
-      didLongPressRemoveRef.current = false;
-      return;
-    }
-
-    handleRemoveCustomTheme();
-  };
-
-  const handleRemoveCustomTheme = () => {
-    if (isRemovingCustomTheme) return;
-
-    setIsRemovingCustomTheme(true);
-
-    Animated.parallel([
-      Animated.timing(customThemeVisibility, {
-        toValue: 0,
-        duration: 200,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }),
-      Animated.timing(customCardScale, {
-        toValue: 0.96,
-        duration: 180,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start(({ finished }) => {
-      if (!finished) {
-        setIsRemovingCustomTheme(false);
-        return;
-      }
-
-      removeCustomTheme();
-
-      customCardScale.setValue(1);
-      setIsRemovingCustomTheme(false);
-
-      importCardVisibility.setValue(0);
-      Animated.timing(importCardVisibility, {
-        toValue: 1,
-        duration: 200,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }).start();
-    });
-  };
+  const handleRemoveCustomTheme = React.useCallback(() => {
+    removeCustomTheme();
+  }, [removeCustomTheme]);
 
   // Filter to get only built-in themes and exclude custom theme from the list
-  const builtInThemes = availableThemes.filter((t) => t.id !== customThemeId);
+  const builtInThemes = availableThemes.filter((th) => th.id !== customThemeId);
   const customTheme = customThemeId
-    ? availableThemes.find((t) => t.id === customThemeId)
+    ? availableThemes.find((th) => th.id === customThemeId)
     : undefined;
-  const customThemeSelected = customThemeId != null && optimisticThemeId === customThemeId;
+
+  // Preview colors for the currently selected theme
+  const previewColors = [
+    themeDefinition.times[time].primary,
+    themeDefinition.times[time].accent,
+    themeDefinition.times[time].text,
+    themeDefinition.times[time].background,
+    themeDefinition.times[time].card,
+    themeDefinition.times[time].cardBorder,
+  ];
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
@@ -324,13 +203,16 @@ export const AppearanceScreen: React.FC = () => {
 
       {/* ── Time selector ───────────────────────────────── */}
       <View className="mb-8">
-        <Text className="mb-4 text-lg font-l_semibold" style={{ color: colors.text }}>
+        <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
           {t('appearance.time')}
+        </Text>
+        <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+          {t('appearance.timeDescription')}
         </Text>
         <View className="flex-row gap-3">
           {availableTimes.map((timeKey) => {
             const icon = TIME_ICONS[timeKey];
-            const selected = timeKey === optimisticTime;
+            const selected = timeKey === time;
 
             return (
               <TimeOptionCard
@@ -347,171 +229,51 @@ export const AppearanceScreen: React.FC = () => {
         </View>
       </View>
 
-      {/* ── Theme selector ──────────────────────────────── */}
+      {/* ── Theme selector (card → popup) ───────────────── */}
       <View className="mb-8">
-        <Text className="mb-4 text-lg font-l_semibold" style={{ color: colors.text }}>
+        <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
           {t('appearance.theme')}
         </Text>
-        <View className="gap-3">
-          {/* Built-in themes */}
-          {builtInThemes.map((theme) => {
-            const selected = theme.id === optimisticThemeId;
+        <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+          {t('appearance.themeDescription')}
+        </Text>
 
-            return (
-              <SelectableCard
-                key={theme.id}
-                selected={selected}
-                onPress={() => handleSelectTheme(theme.id)}
-                colors={colors}
-              >
-                <View className="gap-3">
-                  <View className="flex-row items-center justify-between">
-                    <Text
-                      className="text-base font-l_semibold"
-                      style={{ color: selected ? colors.primary : colors.text }}
-                    >
-                      {theme.name}
-                    </Text>
-                    <AnimatedSelectionIcon visible={selected} color={colors.primary} />
-                  </View>
-
-                  {/* 6 color dots for current time */}
-                  <View className="flex-row gap-2">
-                    {[
-                      theme.times[optimisticTime].primary,
-                      theme.times[optimisticTime].accent,
-                      theme.times[optimisticTime].text,
-                      theme.times[optimisticTime].background,
-                      theme.times[optimisticTime].card,
-                      theme.times[optimisticTime].cardBorder,
-                    ].map((color, i) => (
-                      <View
-                        key={i}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          borderRadius: 10,
-                          backgroundColor: color,
-                          borderWidth: 1,
-                          borderColor: colors.separator,
-                        }}
-                      />
-                    ))}
-                  </View>
-                </View>
-              </SelectableCard>
-            );
-          })}
-
-          {/* Custom Theme Card (with fade transition) */}
-          <Animated.View
-            style={{
-              opacity: customThemeVisibility,
-              transform: [
-                {
-                  translateY: customThemeVisibility.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [6, 0],
-                  }),
-                },
-                { scale: customCardScale },
-              ],
-            }}
-          >
-            {customTheme && (
-              <Pressable
-                onPress={() => handleSelectTheme(customTheme.id)}
-                disabled={isRemovingCustomTheme}
-                onPressIn={handleCustomCardPressIn}
-                onPressOut={handleCustomCardPressOut}
-                style={{
-                  backgroundColor: colors.card,
-                  borderColor: customThemeSelected ? colors.primary : colors.cardBorder,
-                  borderWidth: customThemeSelected ? 2 : 1,
-                  borderRadius: 12,
-                  padding: 16,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <View style={{ flex: 1 }}>
-                  <View className="gap-3">
-                    <View className="flex-row items-center justify-between">
-                      <Text
-                        className="flex-1 text-base font-l_regular"
-                        style={{ color: customThemeSelected ? colors.primary : colors.text }}
-                      >
-                        {customTheme.name}
-                      </Text>
-                    </View>
-
-                    <View className="flex-row gap-2">
-                      {[
-                        customTheme.times[optimisticTime].primary,
-                        customTheme.times[optimisticTime].accent,
-                        customTheme.times[optimisticTime].text,
-                        customTheme.times[optimisticTime].background,
-                        customTheme.times[optimisticTime].card,
-                        customTheme.times[optimisticTime].cardBorder,
-                      ].map((color, i) => (
-                        <View
-                          key={i}
-                          style={{
-                            width: 20,
-                            height: 20,
-                            borderRadius: 10,
-                            backgroundColor: color,
-                            borderWidth: 1,
-                            borderColor: colors.separator,
-                          }}
-                        />
-                      ))}
-                    </View>
-                  </View>
-                </View>
-
-                <View style={{ marginLeft: 16, flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                  <AnimatedSelectionIcon visible={customThemeSelected} color={colors.primary} />
-                  <Pressable
-                    onPress={handlePressRemoveCustomTheme}
-                    onLongPress={handleExplainRemoveCustomTheme}
-                    delayLongPress={450}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('appearance.removeImportedTheme')}
-                    accessibilityHint={t('appearance.removeImportedHint')}
-                    style={{
-                      padding: 8,
-                      borderRadius: 8,
-                      backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                    }}
-                  >
-                    <Feather name="trash-2" size={20} color="#DC2626" />
-                  </Pressable>
-                </View>
-              </Pressable>
-            )}
-          </Animated.View>
-
-          {/* Import Card (with fade transition) */}
-          {!customTheme && (
-            <Animated.View
-              style={{
-                opacity: importCardVisibility,
-                transform: [
-                  {
-                    translateY: importCardVisibility.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [6, 0],
-                    }),
-                  },
-                ],
-              }}
-            >
-              <ImportCard colors={colors} onPress={handleImportTheme} />
-            </Animated.View>
-          )}
-        </View>
+        <AnimatedPressable
+          onPress={() => setIsThemePickerOpen(true)}
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.cardBorder,
+            borderWidth: 1,
+            borderRadius: 12,
+            paddingVertical: 14,
+            paddingHorizontal: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <View style={{ flex: 1, gap: 8 }}>
+            <Text className="text-base font-l_medium" style={{ color: colors.text }}>
+              {themeDefinition.name}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 6 }}>
+              {previewColors.map((color, i) => (
+                <View
+                  key={i}
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: 9,
+                    backgroundColor: color,
+                    borderWidth: 1,
+                    borderColor: colors.separator,
+                  }}
+                />
+              ))}
+            </View>
+          </View>
+          <Feather name="chevron-down" size={20} color={colors.textSecondary} />
+        </AnimatedPressable>
       </View>
 
       <LanguagePickerModal
@@ -520,6 +282,20 @@ export const AppearanceScreen: React.FC = () => {
         selectedPreference={languagePreference}
         onSelect={handleSelectLanguagePreference}
         onClose={() => setIsLanguagePickerOpen(false)}
+        t={t}
+      />
+
+      <ThemePickerModal
+        visible={isThemePickerOpen}
+        colors={colors}
+        selectedThemeId={themeId}
+        time={time}
+        builtInThemes={builtInThemes}
+        customTheme={customTheme}
+        onSelectTheme={setTheme}
+        onImportTheme={handleImportTheme}
+        onRemoveCustomTheme={handleRemoveCustomTheme}
+        onClose={() => setIsThemePickerOpen(false)}
         t={t}
       />
 

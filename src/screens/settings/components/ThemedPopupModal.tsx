@@ -105,47 +105,48 @@ export const ThemedPopupModal: React.FC<ThemedPopupModalProps> = ({
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      <Animated.View
-        style={[
-          {
-            flex: 1,
-            justifyContent: 'center',
-            paddingHorizontal: 20,
-          },
-          overlayStyle,
-        ]}
-      >
-        <BlurView
-          intensity={22}
-          tint="dark"
-          experimentalBlurMethod={Platform.OS === 'android' ? 'dimezisBlurView' : undefined}
-          style={StyleSheet.absoluteFillObject}
-          pointerEvents="none"
-        />
-        <View
-          pointerEvents="none"
-          style={[StyleSheet.absoluteFillObject, { backgroundColor: 'rgba(0, 0, 0, 0.16)' }]}
-        />
-        <Pressable onPress={onClose} style={StyleSheet.absoluteFillObject} />
+      <Pressable onPress={onClose} style={{ flex: 1 }}>
+        <Animated.View
+          style={[
+            {
+              flex: 1,
+              justifyContent: 'center',
+              paddingHorizontal: 20,
+            },
+            overlayStyle,
+          ]}
+        >
+          <BlurView
+            intensity={22}
+            tint="dark"
+            experimentalBlurMethod={Platform.OS === 'android' ? 'dimezisBlurView' : undefined}
+            style={StyleSheet.absoluteFillObject}
+            pointerEvents="none"
+          />
+          <View
+            pointerEvents="none"
+            style={[StyleSheet.absoluteFillObject, { backgroundColor: 'rgba(0, 0, 0, 0.16)' }]}
+          />
 
-        <Animated.View style={popupCardStyle}>
-          <Pressable
-            onPress={(event) => event.stopPropagation()}
-            style={[
-              {
-                backgroundColor: colors.background,
-                borderColor: colors.cardBorder,
-                borderWidth: 1,
-                borderRadius: 16,
-                padding: 16,
-              },
-              cardStyle,
-            ]}
-          >
-            {children}
-          </Pressable>
+          <Animated.View style={popupCardStyle}>
+            <Pressable
+              onPress={(event) => event.stopPropagation()}
+              style={[
+                {
+                  backgroundColor: colors.background,
+                  borderColor: colors.cardBorder,
+                  borderWidth: 1,
+                  borderRadius: 16,
+                  padding: 16,
+                },
+                cardStyle,
+              ]}
+            >
+              {children}
+            </Pressable>
+          </Animated.View>
         </Animated.View>
-      </Animated.View>
+      </Pressable>
     </Modal>
   );
 };

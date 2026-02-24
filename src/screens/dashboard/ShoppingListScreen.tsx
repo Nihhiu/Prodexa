@@ -25,6 +25,7 @@ import {
   ShoppingListItem,
   AddItemForm,
   ConfirmationModal,
+  PriceEstimateSummary,
   type ShoppingItem,
 } from './components';
 // #endregion
@@ -175,7 +176,11 @@ export const ShoppingListScreen: React.FC = () => {
               onPressIn={makePressIn(backBtnScale)}
               onPressOut={makePressOut(backBtnScale)}
               className="p-2 rounded-lg"
-              style={{ backgroundColor: colors.card }}
+              style={{
+                backgroundColor: colors.card,
+                borderWidth: 1,
+                borderColor: colors.cardBorder,
+              }}
               hitSlop={8}
             >
               <Feather
@@ -307,35 +312,41 @@ export const ShoppingListScreen: React.FC = () => {
       {!isShoppingMode && !showAddForm && (
         <Animated.View
           style={fabAnimatedStyle}
-          className="absolute bottom-6 right-6"
+          className="absolute bottom-12 right-6"
         >
           <Pressable
             onPress={() => setShowAddForm(true)}
             onPressIn={makePressIn(fabScale)}
             onPressOut={makePressOut(fabScale)}
-            className="w-14 h-14 rounded-full items-center justify-center shadow-lg"
+            className="rounded-full px-4 py-4 items-center justify-center shadow-lg"
             style={{
               backgroundColor: colors.primary,
               elevation: 6,
             }}
           >
-            <Feather name="plus" size={24} color={colors.primaryText} />
+            <Feather name="plus" size={32} color={colors.primaryText} />
           </Pressable>
         </Animated.View>
       )}
 
       {isShoppingMode && (
         <View
-          className="px-4 pb-6 pt-2"
+          className="pb-6 pt-2"
           style={{ backgroundColor: colors.background }}
         >
-          <Button
-            label={t('shoppingList.exitShoppingMode')}
-            onPress={exitShoppingMode}
-            variant="primary"
-            size="lg"
-            icon={<Feather name="check" size={18} color={colors.primaryText} />}
+          <PriceEstimateSummary
+            items={items}
+            checkedItemIds={checkedItems}
           />
+          <View className="px-4">
+            <Button
+              label={t('shoppingList.exitShoppingMode')}
+              onPress={exitShoppingMode}
+              variant="primary"
+              size="lg"
+              icon={<Feather name="check" size={18} color={colors.primaryText} />}
+            />
+          </View>
         </View>
       )}
       {/* #endregion */}

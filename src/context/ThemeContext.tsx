@@ -294,9 +294,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       overlayOpacity.setValue(0);
       setOverlayBg(colors.background);
 
-
-      applyChange();
-
       RNAnimated.timing(overlayOpacity, {
         toValue: 0.6,
         duration: 180,
@@ -308,6 +305,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           return;
         }
 
+      applyChange();
 
         RNAnimated.timing(overlayOpacity, {
           toValue: 0,

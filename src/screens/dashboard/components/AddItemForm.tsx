@@ -1,9 +1,15 @@
 // #region Imports
 import React from 'react';
-import { View } from 'react-native';
-import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
+import { Pressable, Text, View } from 'react-native';
+import Animated, {
+  FadeInDown,
+  FadeOutDown,
+  FadeOutUp,
+  Layout,
+} from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { Button, Card, Input } from '../../../components/ui';
+import { useTheme } from '../../../hooks/useTheme';
 // #endregion
 
 // #region Types
@@ -35,6 +41,8 @@ export const AddItemForm: React.FC<AddItemFormProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const [showOptionalFields, setShowOptionalFields] = React.useState(false);
 
   return (
     <Animated.View
@@ -42,7 +50,10 @@ export const AddItemForm: React.FC<AddItemFormProps> = ({
       exiting={FadeOutDown.duration(200)}
     >
       <Card className="mb-4" title={t('shoppingList.addItem')}>
-        <View className="gap-3">
+        <Animated.View
+          className="gap-3"
+          layout={Layout.springify().damping(16).stiffness(180)}
+        >
           <Input
             label={t('shoppingList.name') + '(*)'}
             placeholder={t('shoppingList.namePlaceholder')}
@@ -50,33 +61,59 @@ export const AddItemForm: React.FC<AddItemFormProps> = ({
             onChangeText={onNameChange}
             backgroundTone="background"
           />
-          <View className="flex-row gap-3">
-            <View className="flex-1">
+
+          <Pressable
+            onPress={() => setShowOptionalFields(prev => !prev)}
+            className="self-start"
+            hitSlop={8}
+          >
+            <Text
+              className="font-l_semibold text-sm"
+              style={{ color: colors.primary }}
+            >
+              {showOptionalFields
+                ? t('common.showLess', { defaultValue: 'Show less' })
+                : t('common.showMore', { defaultValue: 'Show more' })}
+            </Text>
+          </Pressable>
+
+          {showOptionalFields && (
+            <Animated.View
+              entering={FadeInDown.duration(220)}
+              exiting={FadeOutUp.duration(180)}
+              layout={Layout.springify().damping(16).stiffness(180)}
+              className="gap-3"
+            >
+              <View className="flex-row gap-3">
+                <View className="flex-1">
+                  <Input
+                    label={t('shoppingList.quantity')}
+                    placeholder={t('shoppingList.quantityPlaceholder')}
+                    value={quantity}
+                    onChangeText={onQuantityChange}
+                    backgroundTone="background"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Input
+                    label={t('shoppingList.price')}
+                    placeholder={t('shoppingList.pricePlaceholder')}
+                    value={price}
+                    onChangeText={onPriceChange}
+                    backgroundTone="background"
+                  />
+                </View>
+              </View>
               <Input
-                label={t('shoppingList.quantity')}
-                placeholder={t('shoppingList.quantityPlaceholder')}
-                value={quantity}
-                onChangeText={onQuantityChange}
+                label={t('shoppingList.store')}
+                placeholder={t('shoppingList.storePlaceholder')}
+                value={store}
+                onChangeText={onStoreChange}
                 backgroundTone="background"
               />
-            </View>
-            <View className="flex-1">
-              <Input
-                label={t('shoppingList.price')}
-                placeholder={t('shoppingList.pricePlaceholder')}
-                value={price}
-                onChangeText={onPriceChange}
-                backgroundTone="background"
-              />
-            </View>
-          </View>
-          <Input
-            label={t('shoppingList.store')}
-            placeholder={t('shoppingList.storePlaceholder')}
-            value={store}
-            onChangeText={onStoreChange}
-            backgroundTone="background"
-          />
+            </Animated.View>
+          )}
+
           <View className="flex-row gap-3 mt-2">
             <View className="flex-1">
               <Button
@@ -93,7 +130,7 @@ export const AddItemForm: React.FC<AddItemFormProps> = ({
               />
             </View>
           </View>
-        </View>
+        </Animated.View>
       </Card>
     </Animated.View>
   );

@@ -1,5 +1,5 @@
 // #region Imports
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import {
@@ -40,16 +40,21 @@ const MainTabsScreen: React.FC = () => {
   // Resolve o índice atual da tab para navegação horizontal por página.
   const getTabIndex = (tab: TabKey) => tabs.indexOf(tab);
 
+  // Ref para controlar se a mudança de tab foi feita pelo utilizador (via press)
+  // e evitar que o useEffect interfira com a animação.
+  const isUserNavigation = useRef(false);
+
   // Atualiza tab ativa e desloca o ScrollView para a página correspondente.
-  const handleTabChange = (tab: TabKey) => {
+  const handleTabChange = useCallback((tab: TabKey) => {
     const targetIndex = getTabIndex(tab);
 
+    isUserNavigation.current = true;
     setActiveTab(tab);
     scrollRef.current?.scrollTo({
       x: targetIndex * width,
       animated: true,
     });
-  };
+  }, [width]);
 
   const handleMomentumScrollEnd = (event: {
     nativeEvent: { contentOffset: { x: number } };
@@ -65,6 +70,11 @@ const MainTabsScreen: React.FC = () => {
 
   useEffect(() => {
     // Reposiciona o conteúdo quando a largura muda (ex.: rotação).
+    // Não reage a mudanças de activeTab — a animação é feita por handleTabChange.
+    if (isUserNavigation.current) {
+      isUserNavigation.current = false;
+      return;
+    }
     const activeIndex = getTabIndex(activeTab);
     scrollRef.current?.scrollTo({ x: activeIndex * width, animated: false });
   }, [activeTab, width]);
@@ -78,7 +88,6 @@ const MainTabsScreen: React.FC = () => {
         bounces={false}
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleMomentumScrollEnd}
-        contentOffset={{ x: getTabIndex(activeTab) * width, y: 0 }}
       >
         <View style={{ width }} className="flex-1">
           <HomeScreen />

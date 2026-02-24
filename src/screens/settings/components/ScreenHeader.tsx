@@ -56,7 +56,11 @@ export const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title }) => {
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
             className="p-2 rounded-lg"
-            style={{ backgroundColor: colors.card }}
+            style={{
+              backgroundColor: colors.card,
+              borderWidth: 1,
+              borderColor: colors.cardBorder,
+            }}
             hitSlop={8}
           >
             <Feather name="arrow-left" size={20} color={colors.text} />

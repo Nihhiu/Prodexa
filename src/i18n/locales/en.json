@@ -4,6 +4,8 @@
     "dashboard": "Dashboard",
     "settings": "Settings",
     "language": "Language",
+    "showMore": "Show more",
+    "showLess": "Show less",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "error": "Error",
@@ -36,7 +38,12 @@
     "noItemsToShopDescription": "Add items to the list before starting shopping mode.",
     "deleteItem": "Delete item?",
     "deleteItemDescription": "This item will be permanently removed from the list.",
-    "delete": "Delete"
+    "delete": "Delete",
+    "estimatedTotal": "Estimated total",
+    "itemSingular": "item",
+    "itemPlural": "items",
+    "itemWithoutPriceSingular": "1 item without price — estimate may be lower",
+    "itemWithoutPricePlural": "{{count}} items without price — estimate may be lower"
   },
   "settings": {
     "title": "Settings",
@@ -80,7 +87,11 @@
       "en": "English"
     },
     "time": "Time",
+    "timeDescription": "Choose the time of day for the theme",
     "theme": "Theme",
+    "themeDescription": "Choose or import a theme",
+    "themePickerTitle": "Select theme",
+    "themePickerDescription": "Choose the visual theme for the app.",
     "importTheme": "Import theme",
     "importSuccess": "Theme applied",
     "importSuccessMessage": "Theme \"{{name}}\" imported successfully.",

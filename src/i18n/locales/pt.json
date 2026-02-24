@@ -4,6 +4,8 @@
     "dashboard": "Dashboard",
     "settings": "Definições",
     "language": "Idioma",
+    "showMore": "Mostrar mais",
+    "showLess": "Mostrar menos",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
     "error": "Erro",
@@ -36,7 +38,12 @@
     "noItemsToShopDescription": "Adicione itens à lista antes de iniciar o modo compras.",
     "deleteItem": "Eliminar item?",
     "deleteItemDescription": "Este item será removido permanentemente da lista.",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "estimatedTotal": "Total estimado",
+    "itemSingular": "item",
+    "itemPlural": "itens",
+    "itemWithoutPriceSingular": "1 item sem preço — a estimativa pode ser inferior",
+    "itemWithoutPricePlural": "{{count}} itens sem preço — a estimativa pode ser inferior"
   },
   "settings": {
     "title": "Definições",
@@ -80,7 +87,11 @@
       "en": "English"
     },
     "time": "Tempo",
+    "timeDescription": "Escolher a hora do dia para o tema",
     "theme": "Tema",
+    "themeDescription": "Escolher ou importar um tema",
+    "themePickerTitle": "Selecionar tema",
+    "themePickerDescription": "Escolhe o tema visual da aplicação.",
     "importTheme": "Importar tema",
     "importSuccess": "Tema aplicado",
     "importSuccessMessage": "Tema \"{{name}}\" importado com sucesso.",

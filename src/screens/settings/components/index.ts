@@ -7,5 +7,6 @@ export * from './LanguagePickerModal';
 export * from './ScreenHeader';
 export * from './SelectableCard';
 export * from './ThemedPopupModal';
+export * from './ThemePickerModal';
 export * from './TimeOptionCard';
 // #endregion
