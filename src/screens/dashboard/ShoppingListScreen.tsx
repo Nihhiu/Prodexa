@@ -1,17 +1,20 @@
 // #region Imports
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   ScrollView,
   Pressable,
+  RefreshControl,
 } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   withSpring,
+  withRepeat,
   Easing,
   FadeIn,
+  cancelAnimation,
   type SharedValue,
 } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
@@ -27,6 +30,12 @@ import {
   PriceEstimateSummary,
   type ShoppingItem,
 } from './components';
+import {
+  readAllItems,
+  addItemToCSV,
+  removeItemFromCSV,
+  removeItemsFromCSV,
+} from '../../services/csvStorage';
 // #endregion
 
 // #region Screen
@@ -41,6 +50,7 @@ export const ShoppingListScreen: React.FC = () => {
   const [isShoppingMode, setIsShoppingMode] = useState(false);
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const [showAddForm, setShowAddForm] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Modal state
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
@@ -54,8 +64,26 @@ export const ShoppingListScreen: React.FC = () => {
   const [price, setPrice] = useState('');
   // #endregion
 
+  // #region Load items from CSV on mount
+  const loadItems = useCallback(async (forceRefresh = false) => {
+    setIsRefreshing(true);
+    try {
+      const savedItems = await readAllItems({ forceRefresh });
+      setItems(savedItems);
+    } catch (error) {
+      console.warn('[ShoppingList] Failed to load items from CSV:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadItems(false);
+  }, [loadItems]);
+  // #endregion
+
   // #region Handlers
-  const addItem = useCallback(() => {
+  const addItem = useCallback(async () => {
     if (!name.trim()) return;
     const newItem: ShoppingItem = {
       id: Date.now().toString(),
@@ -71,16 +99,30 @@ export const ShoppingListScreen: React.FC = () => {
     setStore('');
     setPrice('');
     setShowAddForm(false);
-  }, [name, quantity, store, price]);
+
+    // Persist to CSV
+    try {
+      await addItemToCSV(newItem);
+    } catch (error) {
+      console.warn('[ShoppingList] Failed to save item to CSV:', error);
+    }
+  }, [name, quantity, store, price, userName]);
 
   const requestRemoveItem = useCallback((id: string) => {
     setDeleteItemId(id);
   }, []);
 
-  const confirmRemoveItem = useCallback(() => {
+  const confirmRemoveItem = useCallback(async () => {
     if (deleteItemId) {
       setItems(prev => prev.filter(item => item.id !== deleteItemId));
       setDeleteItemId(null);
+
+      // Remove from CSV
+      try {
+        await removeItemFromCSV(deleteItemId);
+      } catch (error) {
+        console.warn('[ShoppingList] Failed to remove item from CSV:', error);
+      }
     }
   }, [deleteItemId]);
 
@@ -111,11 +153,18 @@ export const ShoppingListScreen: React.FC = () => {
     }
   }, [checkedItems]);
 
-  const confirmExitShoppingMode = useCallback(() => {
+  const confirmExitShoppingMode = useCallback(async () => {
     setItems(prev => prev.filter(item => !checkedItems.has(item.id)));
     setCheckedItems(new Set());
     setIsShoppingMode(false);
     setShowExitConfirm(false);
+
+    // Remove purchased items from CSV
+    try {
+      await removeItemsFromCSV(checkedItems);
+    } catch (error) {
+      console.warn('[ShoppingList] Failed to remove purchased items from CSV:', error);
+    }
   }, [checkedItems]);
 
   const cancelAddForm = useCallback(() => {
@@ -125,12 +174,51 @@ export const ShoppingListScreen: React.FC = () => {
     setStore('');
     setPrice('');
   }, []);
+
+  const handleRefresh = useCallback(() => {
+    loadItems(true);
+  }, [loadItems]);
   // #endregion
 
   // #region Animations
   const fabScale = useSharedValue(1);
   const backBtnScale = useSharedValue(1);
   const cartBtnScale = useSharedValue(1);
+  const refreshRotation = useSharedValue(0);
+  const refreshingBannerOpacity = useSharedValue(1);
+
+  useEffect(() => {
+    if (isRefreshing) {
+      refreshRotation.value = 0;
+      refreshRotation.value = withRepeat(
+        withTiming(360, {
+          duration: 900,
+          easing: Easing.linear,
+        }),
+        -1,
+        false,
+      );
+
+      refreshingBannerOpacity.value = withRepeat(
+        withTiming(0.45, { duration: 750, easing: Easing.inOut(Easing.quad) }),
+        -1,
+        true,
+      );
+      return;
+    }
+
+    cancelAnimation(refreshRotation);
+    refreshRotation.value = withTiming(0, {
+      duration: 220,
+      easing: Easing.out(Easing.cubic),
+    });
+
+    cancelAnimation(refreshingBannerOpacity);
+    refreshingBannerOpacity.value = withTiming(1, {
+      duration: 180,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [isRefreshing, refreshRotation, refreshingBannerOpacity]);
 
   const fabAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: fabScale.value }],
@@ -140,6 +228,9 @@ export const ShoppingListScreen: React.FC = () => {
   }));
   const cartBtnAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: cartBtnScale.value }],
+  }));
+  const refreshingBannerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: refreshingBannerOpacity.value,
   }));
 
   const makePressIn = (sv: SharedValue<number>, target = 0.9) => () => {
@@ -155,8 +246,12 @@ export const ShoppingListScreen: React.FC = () => {
 
   const checkedCount = checkedItems.size;
 
+  // #region Render
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <View className="flex-1" style={{
+      backgroundColor: colors.background,
+      paddingBottom: 120
+    }}>
       {/* #region Header */}
       <View
         className="flex-row items-center justify-between px-4 pt-14 pb-4"
@@ -229,6 +324,22 @@ export const ShoppingListScreen: React.FC = () => {
       </View>
       {/* #endregion */}
 
+      {isRefreshing && (
+        <Animated.View entering={FadeIn.duration(180)} className="px-4 mb-3">
+          <Animated.View style={refreshingBannerAnimatedStyle}>
+            <View
+              className="flex-row items-center gap-2 px-3 py-2 rounded-xl"
+              style={{ backgroundColor: colors.card }}
+            >
+              <Feather name="refresh-cw" size={14} color={colors.textSecondary} />
+              <Text className="text-xs font-l_semibold" style={{ color: colors.textSecondary }}>
+                {t('common.updating', { defaultValue: 'Updating list...' })}
+              </Text>
+            </View>
+          </Animated.View>
+        </Animated.View>
+      )}
+
       {/* #region Shopping mode banner */}
       {isShoppingMode && (
         <Animated.View entering={FadeIn.duration(300)} className="px-4 mb-3">
@@ -254,6 +365,16 @@ export const ShoppingListScreen: React.FC = () => {
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        refreshControl={(
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+            progressBackgroundColor={colors.card}
+            progressViewOffset={64}
+          />
+        )}
       >
         {/* Add item form */}
         {showAddForm && !isShoppingMode && (

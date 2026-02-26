@@ -11,41 +11,45 @@ import { ScreenHeader } from './components';
 
 // #region Screen
 export const GeneralSettingsScreen: React.FC = () => {
-  const { colors } = useTheme();
-  const { name, setName } = useUser();
-  const { t } = useTranslation();
+    const { colors } = useTheme();
+    const { name, setName } = useUser();
+    const { t } = useTranslation();
 
-  return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <ScreenHeader title={t('general.title')} />
-      <ScrollView
-        className="flex-1 px-4 pt-4 pb-10"
-        style={{ backgroundColor: colors.background }}
-        contentContainerStyle={{
-          flexGrow: 1,
-          backgroundColor: colors.background,
-        }}
-        overScrollMode="always"
-      >
+    return (
+        <View className="flex-1" style={{ backgroundColor: colors.background }}>
+            {/* HEADER */}
+            <ScreenHeader title={t('general.title')} isParent={false} />
 
-      <View className="mb-5">
-        <Text className="mb-3 text-lg font-l_semibold" style={{ color: colors.text }}>
-          {t('general.profile')}
-        </Text>
+            {/* CONTENT */}
+            <ScrollView
+                className="flex-1 px-4 pt-4 pb-12"
+                style={{ backgroundColor: colors.background }}
+                contentContainerStyle={{
+                    flexGrow: 1,
+                    backgroundColor: colors.background,
+                    paddingBottom: 120
+                }}
+                overScrollMode="always"
+            >
 
-        <Card className="rounded-2xl" themeColors={colors}>
-          <Input
-            label={t('general.nameLabel')}
-            placeholder={t('general.namePlaceholder')}
-            value={name}
-            onChangeText={setName}
-            inputClassName="font-l_light"
-            backgroundTone="background"
-          />
-        </Card>
-      </View>
-      </ScrollView>
-    </View>
-  );
+                <View className="mb-5">
+                    <Text className="mb-3 text-lg font-l_semibold" style={{ color: colors.text }}>
+                        {t('general.profile')}
+                    </Text>
+
+                    <Card className="rounded-2xl" themeColors={colors}>
+                        <Input
+                            label={t('general.nameLabel')}
+                            placeholder={t('general.namePlaceholder')}
+                            value={name}
+                            onChangeText={setName}
+                            inputClassName="font-l_light"
+                            backgroundTone="background"
+                        />
+                    </Card>
+                </View>
+            </ScrollView>
+        </View>
+    );
 };
 // #endregion

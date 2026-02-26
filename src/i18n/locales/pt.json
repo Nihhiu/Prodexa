@@ -9,6 +9,7 @@
     "cancel": "Cancelar",
     "confirm": "Confirmar",
     "error": "Erro",
+    "unexpectedError": "Ocorreu um erro inesperado.",
     "success": "Sucesso"
   },
   "dashboard": {
@@ -124,7 +125,29 @@
     "title": "Política de Privacidade"
   },
   "storageScreen": {
-    "title": "Armazenamento"
+    "title": "Armazenamento",
+    "featureStorage": "Armazenamento por Funcionalidade",
+    "featureStorageDescription": "Escolhe onde cada funcionalidade guarda os seus dados",
+    "shoppingFeature": "Lista de Compras",
+    "shoppingFeatureDescription": "Ficheiro CSV usado pela funcionalidade de compras",
+    "currentPath": "Caminho atual",
+    "fileInfo": "Informações do Ficheiro",
+    "fileName": "Nome do ficheiro",
+    "fileLocation": "Localização",
+    "fileSize": "Tamanho",
+    "itemCount": "Itens guardados",
+    "noFileYet": "Nenhum ficheiro criado",
+    "noFileDescription": "Um ficheiro CSV será criado quando adicionares o primeiro item de compras.",
+    "selectFolder": "Selecionar Pasta",
+    "changeFolder": "Alterar Pasta",
+    "pathUpdated": "Caminho atualizado",
+    "pathUpdatedMessage": "Esta funcionalidade passa a guardar dados na pasta selecionada.",
+    "pathResetMessage": "Esta funcionalidade volta a guardar dados na pasta padrão da app.",
+    "dataMigration": "Migração de Dados",
+    "dataMigrationDescription": "Alterar o local de armazenamento não move os dados existentes. Exporta os dados atuais primeiro, se necessário.",
+    "bytes": "bytes",
+    "kb": "KB",
+    "mb": "MB"
   },
   "about": {
     "title": "Sobre"

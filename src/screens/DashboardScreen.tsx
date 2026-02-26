@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import { Card, Text } from '../components/ui';
 import { RootStackParamList } from '../navigation';
+import { ScreenHeader } from './settings/components';
 
 // #region Feature Card
 interface FeatureCardProps {
@@ -91,25 +92,27 @@ export const DashboardScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
-    <ScrollView
-      className="flex-1 px-4 pt-12"
-      style={{ backgroundColor: colors.background }}
-      contentContainerStyle={{
-        backgroundColor: colors.background,
-        paddingBottom: 120
-      }}
-      overScrollMode="always"
-    >
-      <View className="mb-4 text-3xl font-l_semibold" style={{ backgroundColor: colors.background }}>
-        <Text className="text-3xl font-l_bold" style={{ color: colors.text }}>{t('common.dashboard')}</Text>
-      </View>
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+      {/* HEADER */}
+      <ScreenHeader title={t('common.dashboard')} isParent={true} />
 
-      <FeatureCard
-        icon="shopping-cart"
-        title={t('dashboard.shoppingList')}
-        description={t('dashboard.shoppingListDescription')}
-        onPress={() => navigation.navigate('ShoppingList')}
-      />
-    </ScrollView>
+      {/* CONTENT */}
+      <ScrollView
+        className="flex-1 px-4"
+        style={{ backgroundColor: colors.background }}
+        contentContainerStyle={{
+          backgroundColor: colors.background,
+          paddingBottom: 120,
+        }}
+        overScrollMode="always"
+      >
+        <FeatureCard
+          icon="shopping-cart"
+          title={t('dashboard.shoppingList')}
+          description={t('dashboard.shoppingListDescription')}
+          onPress={() => navigation.navigate('ShoppingList')}
+        />
+      </ScrollView>
+    </View>
   );
 };

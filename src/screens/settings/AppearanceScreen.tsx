@@ -17,7 +17,7 @@ import {
   AnimatedPressable,
   CompactModeSelector,
   FontSizeSlider,
-  ImportFeedbackModal,
+  StatusModal,
   LanguagePickerModal,
   ScreenHeader,
   SectionSeparator,
@@ -168,13 +168,17 @@ export const AppearanceScreen: React.FC = () => {
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <ScreenHeader title={t('appearance.title')} />
+      {/* HEADER */}
+      <ScreenHeader title={t('appearance.title')} isParent={false} />
+
+      {/* CONTENT */}
       <ScrollView
         className="flex-1 px-4 pt-4 pb-12"
         style={{ backgroundColor: colors.background }}
         contentContainerStyle={{
           flexGrow: 1,
           backgroundColor: colors.background,
+          paddingBottom: 120
         }}
         overScrollMode="always"
       >
@@ -355,7 +359,7 @@ export const AppearanceScreen: React.FC = () => {
           t={t}
         />
 
-        <ImportFeedbackModal
+        <StatusModal
           visible={importFeedback.visible}
           colors={colors}
           title={importFeedback.title}

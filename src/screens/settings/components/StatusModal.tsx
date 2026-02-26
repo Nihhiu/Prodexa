@@ -10,7 +10,7 @@ import { ThemedPopupModal } from './ThemedPopupModal';
 // #endregion
 
 // #region Types and constants
-interface ImportFeedbackModalProps {
+interface StatusModalProps {
   visible: boolean;
   colors: ThemeColors;
   title: string;
@@ -22,7 +22,7 @@ interface ImportFeedbackModalProps {
 // #endregion
 
 // #region Component
-export const ImportFeedbackModal: React.FC<ImportFeedbackModalProps> = ({
+export const StatusModal: React.FC<StatusModalProps> = ({
   visible,
   colors,
   title,

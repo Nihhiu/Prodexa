@@ -9,6 +9,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "error": "Error",
+    "unexpectedError": "An unexpected error occurred.",
     "success": "Success"
   },
   "dashboard": {
@@ -124,7 +125,29 @@
     "title": "Privacy Policy"
   },
   "storageScreen": {
-    "title": "Storage"
+    "title": "Storage",
+    "featureStorage": "Feature Storage",
+    "featureStorageDescription": "Choose where each feature saves its own data",
+    "shoppingFeature": "Shopping List",
+    "shoppingFeatureDescription": "CSV file used by the shopping feature",
+    "currentPath": "Current path",
+    "fileInfo": "File Information",
+    "fileName": "File name",
+    "fileLocation": "Location",
+    "fileSize": "Size",
+    "itemCount": "Items stored",
+    "noFileYet": "No file created yet",
+    "noFileDescription": "A CSV file will be created when you add your first shopping item.",
+    "selectFolder": "Select Folder",
+    "changeFolder": "Change Folder",
+    "pathUpdated": "Path updated",
+    "pathUpdatedMessage": "This feature now saves data to the selected folder.",
+    "pathResetMessage": "This feature now saves data to the default app folder.",
+    "dataMigration": "Data Migration",
+    "dataMigrationDescription": "Changing storage location won't move existing data. Export your current data first if needed.",
+    "bytes": "bytes",
+    "kb": "KB",
+    "mb": "MB"
   },
   "about": {
     "title": "About"

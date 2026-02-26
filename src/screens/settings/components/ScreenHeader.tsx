@@ -8,7 +8,6 @@ import Animated, {
   withTiming,
   withSpring,
   Easing,
-  type SharedValue,
 } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -18,11 +17,15 @@ import { useTheme } from '../../../hooks/useTheme';
 // #region Types
 interface ScreenHeaderProps {
   title: string;
+  isParent?: boolean;
 }
 // #endregion
 
 // #region Component
-export const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title }) => {
+export const ScreenHeader: React.FC<ScreenHeaderProps> = ({
+  title,
+  isParent = false,
+}) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -51,22 +54,24 @@ export const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title }) => {
       style={{ backgroundColor: colors.background }}
     >
       <View className="flex-row items-center gap-3">
-        <Animated.View style={backBtnAnimatedStyle}>
-          <Pressable
-            onPress={() => navigation.goBack()}
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-            className="p-2 rounded-lg"
-            style={{
-              backgroundColor: colors.card,
-              borderWidth: 1,
-              borderColor: colors.cardBorder,
-            }}
-            hitSlop={8}
-          >
-            <Feather name="arrow-left" size={20} color={colors.text} />
-          </Pressable>
-        </Animated.View>
+        {!isParent && (
+          <Animated.View style={backBtnAnimatedStyle}>
+            <Pressable
+              onPress={() => navigation.goBack()}
+              onPressIn={handlePressIn}
+              onPressOut={handlePressOut}
+              className="p-2 rounded-lg"
+              style={{
+                backgroundColor: colors.card,
+                borderWidth: 1,
+                borderColor: colors.cardBorder,
+              }}
+              hitSlop={8}
+            >
+              <Feather name="arrow-left" size={20} color={colors.text} />
+            </Pressable>
+          </Animated.View>
+        )}
         <Text className="text-2xl font-l_bold" style={{ color: colors.text }}>
           {title}
         </Text>
