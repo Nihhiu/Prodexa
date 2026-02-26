@@ -25,6 +25,8 @@ interface StorageLocationCardProps {
   title: string;
   description: string;
   badge?: string;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 // #endregion
 
@@ -37,6 +39,8 @@ export const StorageLocationCard: React.FC<StorageLocationCardProps> = ({
   title,
   description,
   badge,
+  accessibilityLabel,
+  accessibilityHint,
 }) => {
   const scale = useSharedValue(1);
   const selectedProgress = useSharedValue(selected ? 1 : 0);
@@ -89,6 +93,10 @@ export const StorageLocationCard: React.FC<StorageLocationCardProps> = ({
     <Animated.View style={animatedContainerStyle} className="flex-1">
       <Pressable
         onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        accessibilityState={{ selected }}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         style={{

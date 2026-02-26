@@ -174,13 +174,17 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   return (
     <View className="px-4 pb-4 pt-2">
       <View
-        className="self-center rounded-2xl py-2 shadow-md"
+        className="self-center rounded-2xl py-2"
         style={{
           width: navWidth,
           paddingHorizontal: NAV_HORIZONTAL_PADDING,
           backgroundColor: colors.navBackground,
           borderWidth: 1,
           borderColor: colors.navBorder,
+          shadowColor: "#000000A0",
+          shadowOffset: { width: 0, height: 2 },
+          shadowRadius: 4,
+          elevation: 5
         }}
       >
         <View className="relative flex-row items-center">

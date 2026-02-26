@@ -58,10 +58,10 @@ export const Button = ({
     primary: { backgroundColor: colors.primary },
     secondary: { backgroundColor: colors.accent },
     danger: { backgroundColor: colors.accent },
-    outline: { borderColor: colors.primary, borderWidth: 2, backgroundColor: 'transparent' },
+    outline: { borderColor: colors.accent, borderWidth: 2, backgroundColor: 'transparent' },
   };
 
-  const labelColor = variant === 'outline' ? colors.primary : colors.primaryText;
+  const labelColor = variant === 'outline' ? colors.accent : colors.primaryText;
 
   return (
     <Animated.View style={animatedStyle}>

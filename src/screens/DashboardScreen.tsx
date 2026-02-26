@@ -59,9 +59,9 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
           <View className="flex-row items-center gap-4">
             <View
               className="p-3 rounded-xl"
-              style={{ backgroundColor: colors.primary + '15' }}
+              style={{ backgroundColor: colors.accent + '15' }}
             >
-              <Feather name={icon} size={24} color={colors.primary} />
+              <Feather name={icon} size={24} color={colors.accent} />
             </View>
             <View className="flex-1">
               <Text
@@ -77,7 +77,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
                 {description}
               </Text>
             </View>
-            <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+            <Feather name="chevron-right" size={20} color={colors.accent} />
           </View>
         </Card>
       </Pressable>

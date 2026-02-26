@@ -14,13 +14,40 @@ interface SectionSeparatorProps {
 export const SectionSeparator: React.FC<SectionSeparatorProps> = ({ colors }) => (
   <View
     style={{
-      height: 1,
       marginVertical: 24,
       marginHorizontal: 4,
-      backgroundColor: colors.separator,
-      opacity: 0.5,
-      borderRadius: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
     }}
-  />
+  >
+    <View
+      style={{
+        flex: 1,
+        height: 1,
+        backgroundColor: colors.separator,
+        opacity: 0.5,
+        borderRadius: 1,
+      }}
+    />
+    <View
+      style={{
+        width: 5,
+        height: 5,
+        borderRadius: 3,
+        backgroundColor: colors.accent,
+        opacity: 0.6,
+      }}
+    />
+    <View
+      style={{
+        flex: 1,
+        height: 1,
+        backgroundColor: colors.separator,
+        opacity: 0.5,
+        borderRadius: 1,
+      }}
+    />
+  </View>
 );
 // #endregion

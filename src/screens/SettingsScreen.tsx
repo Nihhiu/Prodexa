@@ -64,7 +64,7 @@ const AnimatedSettingsItem: React.FC<AnimatedSettingsItemProps> = ({
                 onPressOut={animatePressOut}
             >
                 <Text className="text-base font-l_regular" style={{ color: colors.text }}>{label}</Text>
-                <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+                <Feather name="chevron-right" size={20} color={colors.accent} />
             </Pressable>
         </Animated.View>
     );

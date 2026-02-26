@@ -64,11 +64,11 @@ export const ScreenHeader: React.FC<ScreenHeaderProps> = ({
               style={{
                 backgroundColor: colors.card,
                 borderWidth: 1,
-                borderColor: colors.cardBorder,
+                borderColor: colors.accent + '40',
               }}
               hitSlop={8}
             >
-              <Feather name="arrow-left" size={20} color={colors.text} />
+              <Feather name="arrow-left" size={20} color={colors.accent} />
             </Pressable>
           </Animated.View>
         )}

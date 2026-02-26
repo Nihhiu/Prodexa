@@ -3,8 +3,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ─── Feature Storage Types ─────────────────────────────────────────────
 export type StorageFeature = 'shoppingList';
+export type StorageMode = 'local' | 'cloudFile';
 
 const FEATURE_STORAGE_PATHS_KEY = '@prodexa/feature_storage_paths';
+const FEATURE_STORAGE_MODES_KEY = '@prodexa/feature_storage_modes';
+const FEATURE_CLOUD_URIS_KEY = '@prodexa/feature_cloud_uris';
+const FEATURE_CLOUD_NAMES_KEY = '@prodexa/feature_cloud_names';
 
 const FEATURE_FILE_NAMES: Record<StorageFeature, string> = {
   shoppingList: 'shopping_list.csv',
@@ -63,6 +67,116 @@ export const clearStoragePathForFeature = async (feature: StorageFeature): Promi
   await setFeatureStoragePaths(paths);
 };
 
+// ─── Storage Mode Persistence ──────────────────────────────────────────
+
+const getGenericMap = async <T>(key: string): Promise<Partial<Record<StorageFeature, T>>> => {
+  try {
+    const raw = await AsyncStorage.getItem(key);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== 'object') return {};
+    return parsed as Partial<Record<StorageFeature, T>>;
+  } catch {
+    return {};
+  }
+};
+
+const setGenericMap = async <T>(key: string, map: Partial<Record<StorageFeature, T>>): Promise<void> => {
+  await AsyncStorage.setItem(key, JSON.stringify(map));
+};
+
+/**
+ * Get the configured storage mode for a feature.
+ */
+export const getStorageModeForFeature = async (
+  feature: StorageFeature,
+): Promise<StorageMode> => {
+  const modes = await getGenericMap<StorageMode>(FEATURE_STORAGE_MODES_KEY);
+  return modes[feature] ?? 'local';
+};
+
+/**
+ * Set storage mode for a feature.
+ */
+export const setStorageModeForFeature = async (
+  feature: StorageFeature,
+  mode: StorageMode,
+): Promise<void> => {
+  const modes = await getGenericMap<StorageMode>(FEATURE_STORAGE_MODES_KEY);
+  modes[feature] = mode;
+  await setGenericMap(FEATURE_STORAGE_MODES_KEY, modes);
+};
+
+// ─── Cloud File URI Persistence ────────────────────────────────────────
+
+/**
+ * Get the cloud file URI for a feature.
+ */
+export const getCloudFileUriForFeature = async (
+  feature: StorageFeature,
+): Promise<string | null> => {
+  const uris = await getGenericMap<string>(FEATURE_CLOUD_URIS_KEY);
+  return uris[feature] ?? null;
+};
+
+/**
+ * Set the cloud file URI for a feature.
+ */
+export const setCloudFileUriForFeature = async (
+  feature: StorageFeature,
+  uri: string,
+): Promise<void> => {
+  const uris = await getGenericMap<string>(FEATURE_CLOUD_URIS_KEY);
+  uris[feature] = uri;
+  await setGenericMap(FEATURE_CLOUD_URIS_KEY, uris);
+};
+
+/**
+ * Clear the cloud file URI for a feature.
+ */
+export const clearCloudFileUriForFeature = async (
+  feature: StorageFeature,
+): Promise<void> => {
+  const uris = await getGenericMap<string>(FEATURE_CLOUD_URIS_KEY);
+  delete uris[feature];
+  await setGenericMap(FEATURE_CLOUD_URIS_KEY, uris);
+};
+
+// ─── Cloud File Name Persistence ───────────────────────────────────────
+
+/**
+ * Get the display name of the cloud file for a feature.
+ */
+export const getCloudFileNameForFeature = async (
+  feature: StorageFeature,
+): Promise<string | null> => {
+  const names = await getGenericMap<string>(FEATURE_CLOUD_NAMES_KEY);
+  return names[feature] ?? null;
+};
+
+/**
+ * Set the display name of the cloud file for a feature.
+ */
+export const setCloudFileNameForFeature = async (
+  feature: StorageFeature,
+  name: string,
+): Promise<void> => {
+  const names = await getGenericMap<string>(FEATURE_CLOUD_NAMES_KEY);
+  names[feature] = name;
+  await setGenericMap(FEATURE_CLOUD_NAMES_KEY, names);
+};
+
+/**
+ * Clear the display name of the cloud file for a feature.
+ */
+export const clearCloudFileNameForFeature = async (
+  feature: StorageFeature,
+): Promise<void> => {
+  const names = await getGenericMap<string>(FEATURE_CLOUD_NAMES_KEY);
+  delete names[feature];
+  await setGenericMap(FEATURE_CLOUD_NAMES_KEY, names);
+};
+
 // ─── File Configuration ────────────────────────────────────────────────
 
 /**
@@ -82,13 +196,27 @@ export interface FeatureFileResult {
  * Build a file reference for a feature using feature-specific path,
  * falling back to app local document storage.
  *
+ * In cloud mode, always uses the default local path as a cache file.
+ * The cloud sync layer handles reading/writing the cloud URI separately.
+ *
  * For SAF (content://) directories, lists directory contents to find
  * the existing file by name so that writes overwrite it instead of
  * creating duplicates with a "(1)" suffix.
  */
 export const getFeatureFile = async (feature: StorageFeature): Promise<FeatureFileResult> => {
-  const featurePath = await getStoragePathForFeature(feature);
+  const mode = await getStorageModeForFeature(feature);
   const fileName = FEATURE_FILE_NAMES[feature];
+
+  // In cloud mode, always use default local path as cache
+  if (mode === 'cloudFile') {
+    return {
+      file: new File(Paths.document, fileName),
+      directory: Paths.document,
+      isSAF: false,
+    };
+  }
+
+  const featurePath = await getStoragePathForFeature(feature);
 
   if (!featurePath) {
     return {

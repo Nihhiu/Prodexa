@@ -1,5 +1,6 @@
 import { Directory, File } from 'expo-file-system';
 import { getFeatureFile, type FeatureFileResult } from '../config/storage';
+import { syncToCloud } from './cloudSync';
 import type { ShoppingItem } from '../screens/dashboard/components';
 
 // ─── CSV Column Order ──────────────────────────────────────────────────
@@ -22,7 +23,7 @@ const setItemsCache = (items: ShoppingItem[]): void => {
   lastCacheUpdateAt = Date.now();
 };
 
-const invalidateItemsCache = (): void => {
+export const invalidateItemsCache = (): void => {
   cachedItems = null;
   lastCacheUpdateAt = 0;
 };
@@ -187,12 +188,23 @@ export const readAllItems = async (
   // Skip the header row
   const dataLines = lines.slice(1);
   const items: ShoppingItem[] = [];
+  const seenIds = new Set<string>();
+  let duplicateCount = 0;
 
   for (const line of dataLines) {
     const item = csvRowToItem(line);
     if (item) {
+      if (seenIds.has(item.id)) {
+        duplicateCount += 1;
+        continue;
+      }
+      seenIds.add(item.id);
       items.push(item);
     }
+  }
+
+  if (duplicateCount > 0) {
+    console.warn(`[csvStorage] Ignored ${duplicateCount} duplicated item id(s) while reading CSV.`);
   }
 
   setItemsCache(items);
@@ -209,6 +221,11 @@ const writeAllItems = async (items: ShoppingItem[]): Promise<void> => {
   const content = [CSV_HEADER, ...rows].join('\n') + '\n';
   file.write(content);
   setItemsCache(items);
+
+  // Sync to cloud if in cloud mode (fire-and-forget)
+  void syncToCloud('shoppingList').catch((err) => {
+    console.warn('[csvStorage] Cloud sync after write failed:', err);
+  });
 };
 
 /**
@@ -226,6 +243,11 @@ export const addItemToCSV = async (item: ShoppingItem): Promise<void> => {
   } else {
     invalidateItemsCache();
   }
+
+  // Sync to cloud if in cloud mode (fire-and-forget)
+  void syncToCloud('shoppingList').catch((err) => {
+    console.warn('[csvStorage] Cloud sync after add failed:', err);
+  });
 };
 
 /**

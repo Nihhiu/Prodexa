@@ -18,6 +18,10 @@ interface AnimatedPressableProps {
   style?: React.ComponentProps<typeof Pressable>['style'];
   children: React.ReactNode;
   pressedScale?: number;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  accessibilityRole?: React.ComponentProps<typeof Pressable>['accessibilityRole'];
+  accessibilityState?: React.ComponentProps<typeof Pressable>['accessibilityState'];
 }
 // #endregion
 
@@ -29,6 +33,10 @@ export const AnimatedPressable: React.FC<AnimatedPressableProps> = ({
   style,
   children,
   pressedScale = 0.97,
+  accessibilityLabel,
+  accessibilityHint,
+  accessibilityRole,
+  accessibilityState,
 }) => {
   const scale = useSharedValue(1);
 
@@ -54,6 +62,10 @@ export const AnimatedPressable: React.FC<AnimatedPressableProps> = ({
         onPress={onPress}
         onLongPress={onLongPress}
         disabled={disabled}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        accessibilityRole={accessibilityRole}
+        accessibilityState={accessibilityState}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         style={style}

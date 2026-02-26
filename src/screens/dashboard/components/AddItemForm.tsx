@@ -74,7 +74,7 @@ export const AddItemForm: React.FC<AddItemFormProps> = ({
           >
             <Text
               className="font-l_semibold text-sm"
-              style={{ color: colors.primary }}
+              style={{ color: colors.accent }}
             >
               {showOptionalFields
                 ? t('common.showLess', { defaultValue: 'Show less' })

@@ -36,6 +36,7 @@ import {
   removeItemFromCSV,
   removeItemsFromCSV,
 } from '../../services/csvStorage';
+import { syncFromCloud } from '../../services/cloudSync';
 // #endregion
 
 // #region Screen
@@ -68,6 +69,15 @@ export const ShoppingListScreen: React.FC = () => {
   const loadItems = useCallback(async (forceRefresh = false) => {
     setIsRefreshing(true);
     try {
+      // In cloud mode, sync latest from cloud to local cache on refresh
+      if (forceRefresh) {
+        try {
+          await syncFromCloud('shoppingList');
+        } catch (syncError) {
+          console.warn('[ShoppingList] Cloud sync failed (using local cache):', syncError);
+        }
+      }
+
       const savedItems = await readAllItems({ forceRefresh });
       setItems(savedItems);
     } catch (error) {
@@ -86,7 +96,7 @@ export const ShoppingListScreen: React.FC = () => {
   const addItem = useCallback(async () => {
     if (!name.trim()) return;
     const newItem: ShoppingItem = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       name: name.trim(),
       quantity: quantity.trim() || '1',
       store: store.trim(),
@@ -248,10 +258,7 @@ export const ShoppingListScreen: React.FC = () => {
 
   // #region Render
   return (
-    <View className="flex-1" style={{
-      backgroundColor: colors.background,
-      paddingBottom: 120
-    }}>
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
       {/* #region Header */}
       <View
         className="flex-row items-center justify-between px-4 pt-14 pb-4"
@@ -298,7 +305,7 @@ export const ShoppingListScreen: React.FC = () => {
               onPressIn={makePressIn(cartBtnScale)}
               onPressOut={makePressOut(cartBtnScale)}
               className="p-2.5 rounded-lg"
-              style={{ backgroundColor: colors.primary }}
+              style={{ backgroundColor: colors.accent }}
               hitSlop={8}
             >
               <Feather name="shopping-cart" size={20} color={colors.primaryText} />
@@ -362,7 +369,7 @@ export const ShoppingListScreen: React.FC = () => {
       {/* #region Content */}
       <ScrollView
         className="flex-1 px-4"
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         refreshControl={(
@@ -440,7 +447,7 @@ export const ShoppingListScreen: React.FC = () => {
             onPressOut={makePressOut(fabScale)}
             className="rounded-full px-4 py-4 items-center justify-center shadow-lg"
             style={{
-              backgroundColor: colors.primary,
+              backgroundColor: colors.accent,
               elevation: 6,
             }}
           >

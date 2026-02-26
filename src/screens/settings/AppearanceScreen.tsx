@@ -229,7 +229,7 @@ export const AppearanceScreen: React.FC = () => {
                 ))}
               </View>
             </View>
-            <Feather name="chevron-down" size={20} color={colors.textSecondary} />
+            <Feather name="chevron-down" size={20} color={colors.accent} />
           </AnimatedPressable>
         </View>
 
@@ -293,7 +293,7 @@ export const AppearanceScreen: React.FC = () => {
             <Text className="text-base font-l_medium" style={{ color: colors.text }}>
               {t(`appearance.languageOptions.${languagePreference}`)}
             </Text>
-            <Feather name="chevron-down" size={20} color={colors.textSecondary} />
+            <Feather name="chevron-down" size={20} color={colors.accent} />
           </AnimatedPressable>
         </View>
 
