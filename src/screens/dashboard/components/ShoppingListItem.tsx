@@ -1,6 +1,7 @@
 // #region Imports
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { Text } from '../../../components/ui';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,

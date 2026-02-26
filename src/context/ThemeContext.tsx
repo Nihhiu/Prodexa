@@ -30,6 +30,8 @@ import type {
 const STORAGE_KEY_THEME = '@prodexa/theme';
 const STORAGE_KEY_TIME = '@prodexa/time';
 const STORAGE_KEY_CUSTOM_THEME = '@prodexa/customTheme';
+const STORAGE_KEY_FONT_SIZE = '@prodexa/fontSize';
+const STORAGE_KEY_COMPACT_MODE = '@prodexa/compactMode';
 // #endregion
 
 // #region Config
@@ -66,6 +68,14 @@ export interface ThemeContextValue {
   customThemeId: string | null;
   /** Remove the custom theme and revert to default only if it was selected. */
   removeCustomTheme: () => void;
+  /** Current font size multiplier (0.8 – 1.4). */
+  fontSize: number;
+  /** Change the font size multiplier (persists to AsyncStorage). */
+  setFontSize: (size: number) => void;
+  /** Whether compact mode is enabled (optional fields collapsed by default). */
+  compactMode: boolean;
+  /** Toggle compact mode (persists to AsyncStorage). */
+  setCompactMode: (compact: boolean) => void;
 }
 // #endregion
 
@@ -179,6 +189,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [themeId, setThemeIdState] = useState(fallbackState.themeId);
   const [time, setTimeState] = useState<ThemeTime>(fallbackState.time);
   const [customTheme, setCustomTheme] = useState<ThemeDefinition | null>(null);
+  const [fontSize, setFontSizeState] = useState(1);
+  const [compactMode, setCompactModeState] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [overlayBg, setOverlayBg] = useState<string | null>(null);
   const overlayOpacity = useRef(new RNAnimated.Value(0)).current;
@@ -195,10 +207,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   useEffect(() => {
     (async () => {
       try {
-        const [savedTheme, savedTime, savedCustomThemeJson] = await Promise.all([
+        const [savedTheme, savedTime, savedCustomThemeJson, savedFontSize, savedCompactMode] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEY_THEME),
           AsyncStorage.getItem(STORAGE_KEY_TIME),
           AsyncStorage.getItem(STORAGE_KEY_CUSTOM_THEME),
+          AsyncStorage.getItem(STORAGE_KEY_FONT_SIZE),
+          AsyncStorage.getItem(STORAGE_KEY_COMPACT_MODE),
         ]);
 
         if (savedCustomThemeJson) {
@@ -215,6 +229,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
         if (savedTime && ['day', 'night', 'midnight'].includes(savedTime)) {
           setTimeState(savedTime as ThemeTime);
+        }
+
+        if (savedFontSize) {
+          const parsed = parseFloat(savedFontSize);
+          if (!isNaN(parsed) && parsed >= 0.8 && parsed <= 1.2) {
+            setFontSizeState(parsed);
+          }
+        }
+
+        if (savedCompactMode !== null) {
+          setCompactModeState(savedCompactMode === 'true');
         }
       } catch {
         // Fallback silently to defaults
@@ -276,6 +301,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
     AsyncStorage.removeItem(STORAGE_KEY_CUSTOM_THEME).catch(() => { });
   }, [customTheme, themeId]);
+
+  const setFontSize = useCallback((size: number) => {
+    const clamped = Math.round(Math.max(0.8, Math.min(1.2, size)) * 100) / 100;
+    setFontSizeState(clamped);
+    AsyncStorage.setItem(STORAGE_KEY_FONT_SIZE, String(clamped)).catch(() => { });
+  }, []);
+
+  const setCompactMode = useCallback((compact: boolean) => {
+    setCompactModeState(compact);
+    AsyncStorage.setItem(STORAGE_KEY_COMPACT_MODE, String(compact)).catch(() => { });
+  }, []);
 
   // ── Computed theme values (extracted for overlay tracking) ──
   const activeTheme = useMemo(
@@ -381,6 +417,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       hasCustomTheme: customTheme !== null,
       customThemeId: customTheme?.id ?? null,
       removeCustomTheme,
+      fontSize,
+      setFontSize,
+      compactMode,
+      setCompactMode,
     };
   }, [
     colors,
@@ -394,6 +434,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     importThemeFromJson,
     customTheme,
     removeCustomTheme,
+    fontSize,
+    setFontSize,
+    compactMode,
+    setCompactMode,
   ]);
 
   return (

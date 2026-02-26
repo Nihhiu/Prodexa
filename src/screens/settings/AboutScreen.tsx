@@ -1,7 +1,8 @@
 // #region Imports
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Text } from '../../components/ui';
 import { useTheme } from '../../hooks/useTheme';
 import { ScreenHeader } from './components';
 // #endregion

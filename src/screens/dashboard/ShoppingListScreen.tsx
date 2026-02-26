@@ -2,7 +2,6 @@
 import React, { useState, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   Pressable,
 } from 'react-native';
@@ -20,7 +19,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { useUser } from '../../hooks/useUser';
-import { Button } from '../../components/ui';
+import { Button, Text } from '../../components/ui';
 import {
   ShoppingListItem,
   AddItemForm,

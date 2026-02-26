@@ -1,6 +1,6 @@
 // #region Imports
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import Animated, {
   FadeInDown,
   FadeOutDown,
@@ -8,7 +8,7 @@ import Animated, {
   Layout,
 } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Input } from '../../../components/ui';
+import { Button, Card, Input, Text } from '../../../components/ui';
 import { useTheme } from '../../../hooks/useTheme';
 // #endregion
 
@@ -41,8 +41,13 @@ export const AddItemForm: React.FC<AddItemFormProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
-  const [showOptionalFields, setShowOptionalFields] = React.useState(false);
+  const { colors, compactMode } = useTheme();
+  const [showOptionalFields, setShowOptionalFields] = React.useState(!compactMode);
+
+  // Sync the default state when compactMode preference changes
+  React.useEffect(() => {
+    setShowOptionalFields(!compactMode);
+  }, [compactMode]);
 
   return (
     <Animated.View

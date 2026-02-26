@@ -2,22 +2,25 @@
 import React from 'react';
 import {
   ScrollView,
-  Text,
   View,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import { useTranslation } from 'react-i18next';
 
+import { Text } from '../../components/ui';
 import { type LanguagePreference } from '../../i18n';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useTheme } from '../../hooks/useTheme';
 import type { ThemeTime } from '../../types/theme';
 import {
   AnimatedPressable,
+  CompactModeSelector,
+  FontSizeSlider,
   ImportFeedbackModal,
   LanguagePickerModal,
   ScreenHeader,
+  SectionSeparator,
   ThemePickerModal,
   TimeOptionCard,
 } from './components';
@@ -48,6 +51,10 @@ export const AppearanceScreen: React.FC = () => {
     hasCustomTheme,
     customThemeId,
     removeCustomTheme,
+    fontSize,
+    setFontSize,
+    compactMode,
+    setCompactMode,
   } = useTheme();
   const { languagePreference, setLanguagePreference } = useLanguage();
   const { t } = useTranslation();
@@ -167,147 +174,196 @@ export const AppearanceScreen: React.FC = () => {
         style={{ backgroundColor: colors.background }}
         contentContainerStyle={{
           flexGrow: 1,
-          backgroundColor: colors.background
+          backgroundColor: colors.background,
         }}
         overScrollMode="always"
       >
-        {/* ── Language selector ─────────────────────────── */}
-      <View className="mb-8">
-        <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
-          {t('appearance.language')}
-        </Text>
-        <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
-          {t('appearance.languageDescription')}
-        </Text>
+        {/* ═══════════════════════════════════════════════════
+            SECTION 1: Theme + Time
+            ═══════════════════════════════════════════════════ */}
 
-        <AnimatedPressable
-          onPress={() => setIsLanguagePickerOpen(true)}
-          style={{
-            backgroundColor: colors.card,
-            borderColor: colors.cardBorder,
-            borderWidth: 1,
-            borderRadius: 12,
-            paddingVertical: 14,
-            paddingHorizontal: 16,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Text className="text-base font-l_medium" style={{ color: colors.text }}>
-            {t(`appearance.languageOptions.${languagePreference}`)}
+        {/* ── Theme selector (card → popup) ───────────────── */}
+        <View className="mb-8">
+          <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
+            {t('appearance.theme')}
           </Text>
-          <Feather name="chevron-down" size={20} color={colors.textSecondary} />
-        </AnimatedPressable>
-      </View>
+          <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+            {t('appearance.themeDescription')}
+          </Text>
 
-      {/* ── Time selector ───────────────────────────────── */}
-      <View className="mb-8">
-        <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
-          {t('appearance.time')}
-        </Text>
-        <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
-          {t('appearance.timeDescription')}
-        </Text>
-        <View className="flex-row gap-3">
-          {availableTimes.map((timeKey) => {
-            const icon = TIME_ICONS[timeKey];
-            const selected = timeKey === time;
-
-            return (
-              <TimeOptionCard
-                key={timeKey}
-                t={timeKey}
-                selected={selected}
-                colors={colors}
-                label={t(`appearance.timeLabels.${timeKey}`)}
-                icon={icon}
-                onPress={() => handleSelectTime(timeKey)}
-              />
-            );
-          })}
-        </View>
-      </View>
-
-      {/* ── Theme selector (card → popup) ───────────────── */}
-      <View className="mb-8">
-        <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
-          {t('appearance.theme')}
-        </Text>
-        <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
-          {t('appearance.themeDescription')}
-        </Text>
-
-        <AnimatedPressable
-          onPress={() => setIsThemePickerOpen(true)}
-          style={{
-            backgroundColor: colors.card,
-            borderColor: colors.cardBorder,
-            borderWidth: 1,
-            borderRadius: 12,
-            paddingVertical: 14,
-            paddingHorizontal: 16,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <View style={{ flex: 1, gap: 8 }}>
-            <Text className="text-base font-l_medium" style={{ color: colors.text }}>
-              {themeDefinition.name}
-            </Text>
-            <View style={{ flexDirection: 'row', gap: 6 }}>
-              {previewColors.map((color, i) => (
-                <View
-                  key={i}
-                  style={{
-                    width: 18,
-                    height: 18,
-                    borderRadius: 9,
-                    backgroundColor: color,
-                    borderWidth: 1,
-                    borderColor: colors.separator,
-                  }}
-                />
-              ))}
+          <AnimatedPressable
+            onPress={() => setIsThemePickerOpen(true)}
+            style={{
+              backgroundColor: colors.card,
+              borderColor: colors.cardBorder,
+              borderWidth: 1,
+              borderRadius: 12,
+              paddingVertical: 14,
+              paddingHorizontal: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <View style={{ flex: 1, gap: 8 }}>
+              <Text className="text-base font-l_medium" style={{ color: colors.text }}>
+                {themeDefinition.name}
+              </Text>
+              <View style={{ flexDirection: 'row', gap: 6 }}>
+                {previewColors.map((color, i) => (
+                  <View
+                    key={i}
+                    style={{
+                      width: 18,
+                      height: 18,
+                      borderRadius: 9,
+                      backgroundColor: color,
+                      borderWidth: 1,
+                      borderColor: colors.separator,
+                    }}
+                  />
+                ))}
+              </View>
             </View>
+            <Feather name="chevron-down" size={20} color={colors.textSecondary} />
+          </AnimatedPressable>
+        </View>
+
+        {/* ── Time selector ───────────────────────────────── */}
+        <View className="mb-4">
+          <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
+            {t('appearance.time')}
+          </Text>
+          <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+            {t('appearance.timeDescription')}
+          </Text>
+          <View className="flex-row gap-3">
+            {availableTimes.map((timeKey) => {
+              const icon = TIME_ICONS[timeKey];
+              const selected = timeKey === time;
+
+              return (
+                <TimeOptionCard
+                  key={timeKey}
+                  t={timeKey}
+                  selected={selected}
+                  colors={colors}
+                  label={t(`appearance.timeLabels.${timeKey}`)}
+                  icon={icon}
+                  onPress={() => handleSelectTime(timeKey)}
+                />
+              );
+            })}
           </View>
-          <Feather name="chevron-down" size={20} color={colors.textSecondary} />
-        </AnimatedPressable>
-      </View>
+        </View>
 
-      <LanguagePickerModal
-        visible={isLanguagePickerOpen}
-        colors={colors}
-        selectedPreference={languagePreference}
-        onSelect={handleSelectLanguagePreference}
-        onClose={() => setIsLanguagePickerOpen(false)}
-        t={t}
-      />
+        <SectionSeparator colors={colors} />
 
-      <ThemePickerModal
-        visible={isThemePickerOpen}
-        colors={colors}
-        selectedThemeId={themeId}
-        time={time}
-        builtInThemes={builtInThemes}
-        customTheme={customTheme}
-        onSelectTheme={setTheme}
-        onImportTheme={handleImportTheme}
-        onRemoveCustomTheme={handleRemoveCustomTheme}
-        onClose={() => setIsThemePickerOpen(false)}
-        t={t}
-      />
+        {/* ═══════════════════════════════════════════════════
+            SECTION 2: Language + Font Size
+            ═══════════════════════════════════════════════════ */}
 
-      <ImportFeedbackModal
-        visible={importFeedback.visible}
-        colors={colors}
-        title={importFeedback.title}
-        message={importFeedback.message}
-        variant={importFeedback.variant}
-        onClose={handleCloseImportFeedback}
-        t={t}
-      />
+        {/* ── Language selector ─────────────────────────── */}
+        <View className="mb-8">
+          <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
+            {t('appearance.language')}
+          </Text>
+          <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+            {t('appearance.languageDescription')}
+          </Text>
+
+          <AnimatedPressable
+            onPress={() => setIsLanguagePickerOpen(true)}
+            style={{
+              backgroundColor: colors.card,
+              borderColor: colors.cardBorder,
+              borderWidth: 1,
+              borderRadius: 12,
+              paddingVertical: 14,
+              paddingHorizontal: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Text className="text-base font-l_medium" style={{ color: colors.text }}>
+              {t(`appearance.languageOptions.${languagePreference}`)}
+            </Text>
+            <Feather name="chevron-down" size={20} color={colors.textSecondary} />
+          </AnimatedPressable>
+        </View>
+
+        {/* ── Font size slider ─────────────────────────── */}
+        <View className="mb-4">
+          <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
+            {t('appearance.fontSize')}
+          </Text>
+          <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+            {t('appearance.fontSizeDescription')}
+          </Text>
+
+          <FontSizeSlider
+            colors={colors}
+            fontSize={fontSize}
+            onFontSizeChange={setFontSize}
+            t={t}
+          />
+        </View>
+
+        <SectionSeparator colors={colors} />
+
+        {/* ═══════════════════════════════════════════════════
+            SECTION 3: Compact / Want to Write!
+            ═══════════════════════════════════════════════════ */}
+        <View className="mb-8">
+          <Text className="mb-2 text-lg font-l_semibold" style={{ color: colors.text }}>
+            {t('appearance.layoutMode')}
+          </Text>
+          <Text className="mb-4 text-sm font-l_regular" style={{ color: colors.textSecondary }}>
+            {t('appearance.layoutModeDescription')}
+          </Text>
+
+          <CompactModeSelector
+            colors={colors}
+            compactMode={compactMode}
+            onCompactModeChange={setCompactMode}
+            t={t}
+          />
+        </View>
+
+        {/* ── Modals ────────────────────────────────────── */}
+        <LanguagePickerModal
+          visible={isLanguagePickerOpen}
+          colors={colors}
+          selectedPreference={languagePreference}
+          onSelect={handleSelectLanguagePreference}
+          onClose={() => setIsLanguagePickerOpen(false)}
+          t={t}
+        />
+
+        <ThemePickerModal
+          visible={isThemePickerOpen}
+          colors={colors}
+          selectedThemeId={themeId}
+          time={time}
+          builtInThemes={builtInThemes}
+          customTheme={customTheme}
+          onSelectTheme={setTheme}
+          onImportTheme={handleImportTheme}
+          onRemoveCustomTheme={handleRemoveCustomTheme}
+          onClose={() => setIsThemePickerOpen(false)}
+          t={t}
+        />
+
+        <ImportFeedbackModal
+          visible={importFeedback.visible}
+          colors={colors}
+          title={importFeedback.title}
+          message={importFeedback.message}
+          variant={importFeedback.variant}
+          onClose={handleCloseImportFeedback}
+          t={t}
+        />
       </ScrollView>
     </View>
   );

@@ -1,9 +1,9 @@
 // #region Imports
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { Card, Input } from '../../components/ui';
+import { Card, Input, Text } from '../../components/ui';
 import { useTheme } from '../../hooks/useTheme';
 import { useUser } from '../../hooks/useUser';
 import { ScreenHeader } from './components';

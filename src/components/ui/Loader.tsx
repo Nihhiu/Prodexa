@@ -1,5 +1,6 @@
 import React from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
+import { Text } from './Text';
 import { useTheme } from '../../hooks/useTheme';
 
 type LoaderSize = 'small' | 'large';

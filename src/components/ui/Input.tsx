@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { TextInput, View } from 'react-native';
+import { Text } from './Text';
 import { useTheme } from '../../hooks/useTheme';
 
 interface InputProps {
@@ -29,20 +30,28 @@ export const Input = ({
   inputClassName = '',
   backgroundTone = 'surface',
 }: InputProps) => {
-  const { colors } = useTheme();
+  const { colors, fontSize: fontScale } = useTheme();
   const editableBackgroundColor =
     backgroundTone === 'background' ? colors.background : colors.surface;
+
+  // Scale TextInput font size consistently with Text components
+  const scaledInputStyle = fontScale !== 1
+    ? { fontSize: Math.round(16 * fontScale * 10) / 10, lineHeight: Math.round(24 * fontScale * 10) / 10 }
+    : undefined;
 
   return (
     <View className="w-full gap-2">
       {label && <Text className="font-l_semibold" style={{ color: colors.text }}>{label}</Text>}
       <TextInput
         className={`rounded-lg border-2 px-4 py-3 text-base  ${inputClassName}`}
-        style={{
-          color: colors.text,
-          borderColor: error ? colors.accent : colors.surfaceBorder,
-          backgroundColor: editable ? editableBackgroundColor + '80' : colors.background + '80',
-        }}
+        style={[
+          {
+            color: colors.text,
+            borderColor: error ? colors.accent : colors.surfaceBorder,
+            backgroundColor: editable ? editableBackgroundColor + '80' : colors.background + '80',
+          },
+          scaledInputStyle,
+        ]}
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}

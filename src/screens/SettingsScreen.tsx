@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Pressable, Text, View, ScrollView, Alert } from 'react-native';
+import { Pressable, View, ScrollView, Alert } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -15,7 +15,7 @@ import { useTheme } from '../hooks/useTheme';
 import type { ThemeColors } from '../types/theme';
 import { Linking } from 'react-native';
 
-import { Card } from '../components/ui';
+import { Card, Text } from '../components/ui';
 import { RootStackParamList } from '../navigation';
 
 interface SectionData {
