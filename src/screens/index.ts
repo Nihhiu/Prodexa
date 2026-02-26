@@ -6,6 +6,7 @@ export {
 	AppearanceScreen,
 	NotificationsScreen,
 	WatchAdsScreen,
+	FeaturesScreen,
 	PrivacyPolicyScreen,
 	StorageScreen,
 	AboutScreen,

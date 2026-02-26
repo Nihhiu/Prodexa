@@ -101,6 +101,7 @@ export const SettingsScreen: React.FC = () => {
                     { label: t('settings.general'), onPress: () => navigation.navigate('GeneralSettings') },
                     { label: t('settings.appearance'), onPress: () => navigation.navigate('Appearance') },
                     { label: t('settings.notifications'), onPress: () => navigation.navigate('Notifications') },
+                    { label: t('settings.features'), onPress: () => navigation.navigate('Features') },
                 ],
             },
             {
@@ -154,7 +155,7 @@ export const SettingsScreen: React.FC = () => {
                 items: [
                     { label: t('settings.about'), onPress: () => navigation.navigate('About') },
                 ],
-            },
+            }
         ],
         [navigation, t],
     );

@@ -16,6 +16,7 @@ import {
   NotificationsScreen,
   WatchAdsScreen,
   AboutScreen,
+  FeaturesScreen,
   PrivacyPolicyScreen,
   StorageScreen,
   ShoppingListScreen,
@@ -166,6 +167,11 @@ export const MainNavigator: React.FC = () => {
         <Stack.Screen
           name="WatchAds"
           component={WatchAdsScreen}
+          options={{ headerShown: false, ...settingsDetailScreenOptions }}
+        />
+        <Stack.Screen
+          name="Features"
+          component={FeaturesScreen}
           options={{ headerShown: false, ...settingsDetailScreenOptions }}
         />
         <Stack.Screen

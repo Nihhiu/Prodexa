@@ -6,6 +6,7 @@ export type RootStackParamList = {
   WatchAds: undefined;
   ListenMusic: undefined;
   OtherLinks: undefined;
+  Features: undefined;
   PrivacyPolicy: undefined;
   Storage: undefined;
   About: undefined;

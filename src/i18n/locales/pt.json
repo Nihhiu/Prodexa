@@ -62,6 +62,7 @@
     "otherLinks": "Outros Links",
     "privacyPolicy": "Política de Privacidade",
     "storage": "Armazenamento",
+    "features": "Funcionalidades",
     "about": "Sobre"
   },
   "general": {
@@ -174,7 +175,53 @@
     "kb": "KB",
     "mb": "MB"
   },
+  "features": {
+    "title": "Funcionalidades",
+    "subtitle": "Descobre as principais funcionalidades da Prodexa",
+    "shoppingList": {
+      "title": "Lista de Compras",
+      "description": "Gerir uma lista completa de compras com informações de quantidade, loja e preço."
+    },
+    "shoppingMode": {
+      "title": "Modo Compras",
+      "description": "Marca itens como comprados enquanto fazes as tuas compras e remove-os facilmente."
+    },
+    "priceEstimate": {
+      "title": "Estimativa de Preço",
+      "description": "Calcula automaticamente o total estimado dos teus itens de compra."
+    },
+    "cloudSync": {
+      "title": "Sincronização na Cloud",
+      "description": "Sincroniza a tua lista com ficheiros na cloud (Google Drive, OneDrive, etc.)."
+    },
+    "customStorage": {
+      "title": "Armazenamento Personalizado",
+      "description": "Escolhe onde guardar os teus dados — no dispositivo ou em pasta personalizada."
+    },
+    "themes": {
+      "title": "Temas Personalizáveis",
+      "description": "Escolhe entre vários temas visuais ou importa o teu próprio tema."
+    },
+    "languages": {
+      "title": "Múltiplos Idiomas",
+      "description": "Utiliza a aplicação em Português ou Inglês conforme a tua preferência."
+    },
+    "moreInfo": "Mais Informações",
+    "moreInfoDescription": "Explora todas as definições disponíveis para personalizar a aplicação conforme as tuas necessidades."
+  },
   "about": {
-    "title": "Sobre"
+    "title": "Sobre",
+    "appVersion": "Versão da App",
+    "currentVersion": "Versão atual: {{version}}",
+    "checkingForUpdates": "A verificar atualizações…",
+    "upToDate": "Estás atualizado!",
+    "updateAvailable": "Atualização disponível: {{version}}",
+    "updateCheckFailed": "Não foi possível verificar atualizações. Tenta mais tarde.",
+    "autoUpdateCheck": "Verificação Automática de Atualizações",
+    "autoUpdateCheckDescription": "Verificar automaticamente novas versões semanalmente",
+    "userManual": "Manual do Utilizador",
+    "userManualDisabled": "Em breve",
+    "sourceCode": "Código Fonte",
+    "sourceCodeDescription": "Ver o projeto no GitHub"
   }
 }

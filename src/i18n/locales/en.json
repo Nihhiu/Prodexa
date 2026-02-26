@@ -62,6 +62,7 @@
     "otherLinks": "Other Links",
     "privacyPolicy": "Privacy Policy",
     "storage": "Storage",
+    "features": "Features",
     "about": "About"
   },
   "general": {
@@ -174,7 +175,53 @@
     "kb": "KB",
     "mb": "MB"
   },
+  "features": {
+    "title": "Features",
+    "subtitle": "Discover the main features of Prodexa",
+    "shoppingList": {
+      "title": "Shopping List",
+      "description": "Manage a complete shopping list with quantity, store, and price information."
+    },
+    "shoppingMode": {
+      "title": "Shopping Mode",
+      "description": "Check off items as you shop and easily remove purchased items from your list."
+    },
+    "priceEstimate": {
+      "title": "Price Estimate",
+      "description": "Automatically calculates the estimated total cost of your shopping items."
+    },
+    "cloudSync": {
+      "title": "Cloud Synchronization",
+      "description": "Sync your list with cloud files (Google Drive, OneDrive, etc.)."
+    },
+    "customStorage": {
+      "title": "Custom Storage",
+      "description": "Choose where to save your data — on device or in a custom folder."
+    },
+    "themes": {
+      "title": "Customizable Themes",
+      "description": "Choose from various visual themes or import your own custom theme."
+    },
+    "languages": {
+      "title": "Multiple Languages",
+      "description": "Use the app in Portuguese or English according to your preference."
+    },
+    "moreInfo": "More Information",
+    "moreInfoDescription": "Explore all available settings to customize the app according to your needs."
+  },
   "about": {
-    "title": "About"
+    "title": "About",
+    "appVersion": "App Version",
+    "currentVersion": "Current version: {{version}}",
+    "checkingForUpdates": "Checking for updates…",
+    "upToDate": "You're up to date!",
+    "updateAvailable": "Update available: {{version}}",
+    "updateCheckFailed": "Could not check for updates. Try again later.",
+    "autoUpdateCheck": "Automatic Update Check",
+    "autoUpdateCheckDescription": "Automatically check for new versions weekly",
+    "userManual": "User Manual",
+    "userManualDisabled": "Coming soon",
+    "sourceCode": "Source Code",
+    "sourceCodeDescription": "View the project on GitHub"
   }
 }
