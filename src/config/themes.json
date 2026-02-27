@@ -1,5 +1,68 @@
 {
   "themes": {
+    "prodexaTheme": {
+      "id": "prodexaTheme",
+      "name": "Prodexa Theme (Default)",
+      "times": {
+        "day": {
+          "background": "#F4F2FA",
+          "surface": "#FFFFFF",
+          "surfaceBorder": "#D1CCFA",
+          "text": "#2A2840",
+          "textSecondary": "#6E6A88",
+          "primary": "#495268",
+          "primaryText": "#FFFFFF",
+          "accent": "#D1CCFA",
+          "navBackground": "#FFFFFF",
+          "navBorder": "#D1CCFA",
+          "navActive": "#495268",
+          "navActiveBackground": "#EAF0FF",
+          "navInactive": "#6E6A88",
+          "card": "#FFFFFF",
+          "cardBorder": "#D1CCFA",
+          "separator": "#E4E0F0",
+          "statusBarStyle": "dark"
+        },
+        "night": {
+          "background": "#1A1828",
+          "surface": "#252338",
+          "surfaceBorder": "#3A3650",
+          "text": "#EFE5E9",
+          "textSecondary": "#A8A0B8",
+          "primary": "#8880C0",
+          "primaryText": "#1A1828",
+          "accent": "#D1CCFA",
+          "navBackground": "#252338",
+          "navBorder": "#3A3650",
+          "navActive": "#8880C0",
+          "navActiveBackground": "#3A3650",
+          "navInactive": "#686080",
+          "card": "#252338",
+          "cardBorder": "#3A3650",
+          "separator": "#3A3650",
+          "statusBarStyle": "light"
+        },
+        "midnight": {
+          "background": "#0C0A18",
+          "surface": "#1A1828",
+          "surfaceBorder": "#252338",
+          "text": "#E8E0EA",
+          "textSecondary": "#686080",
+          "primary": "#6E68A8",
+          "primaryText": "#E8E0EA",
+          "accent": "#B0A8E0",
+          "navBackground": "#1A1828",
+          "navBorder": "#252338",
+          "navActive": "#6E68A8",
+          "navActiveBackground": "#252338",
+          "navInactive": "#484060",
+          "card": "#1A1828",
+          "cardBorder": "#252338",
+          "separator": "#252338",
+          "statusBarStyle": "light"
+        }
+      }
+    },
     "apple": {
       "id": "apple",
       "name": "Apple",
@@ -689,69 +752,6 @@
           "card": "#0E1A28",
           "cardBorder": "#162838",
           "separator": "#162838",
-          "statusBarStyle": "light"
-        }
-      }
-    },
-    "prodexaTheme": {
-      "id": "prodexaTheme",
-      "name": "Prodexa Theme",
-      "times": {
-        "day": {
-          "background": "#F4F2FA",
-          "surface": "#FFFFFF",
-          "surfaceBorder": "#D1CCFA",
-          "text": "#2A2840",
-          "textSecondary": "#6E6A88",
-          "primary": "#495268",
-          "primaryText": "#FFFFFF",
-          "accent": "#D1CCFA",
-          "navBackground": "#FFFFFF",
-          "navBorder": "#D1CCFA",
-          "navActive": "#495268",
-          "navActiveBackground": "#EAF0FF",
-          "navInactive": "#6E6A88",
-          "card": "#FFFFFF",
-          "cardBorder": "#D1CCFA",
-          "separator": "#E4E0F0",
-          "statusBarStyle": "dark"
-        },
-        "night": {
-          "background": "#1A1828",
-          "surface": "#252338",
-          "surfaceBorder": "#3A3650",
-          "text": "#EFE5E9",
-          "textSecondary": "#A8A0B8",
-          "primary": "#8880C0",
-          "primaryText": "#1A1828",
-          "accent": "#D1CCFA",
-          "navBackground": "#252338",
-          "navBorder": "#3A3650",
-          "navActive": "#8880C0",
-          "navActiveBackground": "#3A3650",
-          "navInactive": "#686080",
-          "card": "#252338",
-          "cardBorder": "#3A3650",
-          "separator": "#3A3650",
-          "statusBarStyle": "light"
-        },
-        "midnight": {
-          "background": "#0C0A18",
-          "surface": "#1A1828",
-          "surfaceBorder": "#252338",
-          "text": "#E8E0EA",
-          "textSecondary": "#686080",
-          "primary": "#6E68A8",
-          "primaryText": "#E8E0EA",
-          "accent": "#B0A8E0",
-          "navBackground": "#1A1828",
-          "navBorder": "#252338",
-          "navActive": "#6E68A8",
-          "navActiveBackground": "#252338",
-          "navInactive": "#484060",
-          "card": "#1A1828",
-          "cardBorder": "#252338",
-          "separator": "#252338",
           "statusBarStyle": "light"
         }
       }

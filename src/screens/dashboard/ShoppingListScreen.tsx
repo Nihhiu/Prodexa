@@ -287,7 +287,7 @@ export const ShoppingListScreen: React.FC = () => {
               <Feather
                 name={isShoppingMode ? 'x' : 'arrow-left'}
                 size={20}
-                color={colors.text}
+                color={colors.textSecondary}
               />
             </Pressable>
           </Animated.View>

@@ -1,6 +1,7 @@
 // #region Imports
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import {
   createStackNavigator,
@@ -8,6 +9,7 @@ import {
 } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
 import {
+  OnboardingScreen,
   HomeScreen,
   DashboardScreen,
   SettingsScreen,
@@ -27,6 +29,7 @@ import { useTheme } from '../hooks/useTheme';
 // #endregion
 
 // #region Constants
+const STORAGE_KEY_ONBOARDING = '@prodexa/onboardingComplete';
 const tabs: TabKey[] = ['home', 'dashboard', 'settings'];
 const Stack = createStackNavigator<RootStackParamList>();
 // #endregion
@@ -112,6 +115,27 @@ const MainTabsScreen: React.FC = () => {
 export const MainNavigator: React.FC = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
+
+  // ── Onboarding gate ─────────────────────────────────────────
+  const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem(STORAGE_KEY_ONBOARDING).then((value) => {
+      setOnboardingDone(value === 'true');
+    });
+  }, []);
+
+  const handleOnboardingComplete = useCallback(() => {
+    setOnboardingDone(true);
+  }, []);
+
+  // Still checking storage — avoid flash
+  if (onboardingDone === null) return null;
+
+  // Show onboarding
+  if (!onboardingDone) {
+    return <OnboardingScreen onComplete={handleOnboardingComplete} />;
+  }
 
   // Mapeia tokens de tema interno para o tema esperado pelo React Navigation.
   const navigationTheme = {

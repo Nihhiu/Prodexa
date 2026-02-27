@@ -2,6 +2,7 @@ import React from 'react';
 import { TextInput, View } from 'react-native';
 import { Text } from './Text';
 import { useTheme } from '../../hooks/useTheme';
+import { getEffectiveFontScale } from '../../utils/fontScale';
 
 interface InputProps {
   label?: string;
@@ -30,14 +31,16 @@ export const Input = ({
   inputClassName = '',
   backgroundTone = 'surface',
 }: InputProps) => {
-  const { colors, fontSize: fontScale } = useTheme();
+  const { colors, fontSize: selectedFontScale } = useTheme();
+  const fontScale = getEffectiveFontScale(selectedFontScale);
   const editableBackgroundColor =
     backgroundTone === 'background' ? colors.background : colors.surface;
 
-  // Scale TextInput font size consistently with Text components
-  const scaledInputStyle = fontScale !== 1
-    ? { fontSize: Math.round(16 * fontScale * 10) / 10, lineHeight: Math.round(24 * fontScale * 10) / 10 }
-    : undefined;
+  // Scale TextInput font size consistently for all values, including 100%
+  const scaledInputStyle = {
+    fontSize: Math.round(16 * fontScale * 10) / 10,
+    lineHeight: Math.round(24 * fontScale * 10) / 10,
+  };
 
   return (
     <View className="w-full gap-2">

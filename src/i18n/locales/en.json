@@ -209,6 +209,20 @@
     "moreInfo": "More Information",
     "moreInfoDescription": "Explore all available settings to customize the app according to your needs."
   },
+  "onboarding": {
+    "nameTitle": "What's your name?",
+    "nameSubtitle": "Let's personalize your experience",
+    "namePlaceholder": "e.g. Naegi Makoto",
+    "themeTitle": "Choose your style",
+    "themeSubtitle": "Pick a theme and time that suits you",
+    "preview": "Live preview",
+    "fontTitle": "Reading comfort",
+    "fontSubtitle": "Adjust the text size and display mode",
+    "fontPreviewText": "This is how text will look in the app.",
+    "next": "Next",
+    "back": "Back",
+    "finish": "Get Started"
+  },
   "about": {
     "title": "About",
     "appVersion": "App Version",

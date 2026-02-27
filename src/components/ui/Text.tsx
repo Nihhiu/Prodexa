@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { getEffectiveFontScale } from '../../utils/fontScale';
 // #endregion
 
 // #region Constants
@@ -40,12 +41,8 @@ export const Text: React.FC<TextProps & { className?: string }> = ({
   style,
   ...props
 }) => {
-  const { fontSize: fontScale } = useTheme();
-
-  // Fast path – no scaling
-  if (fontScale === 1) {
-    return <RNText className={className} style={style} {...props} />;
-  }
+  const { fontSize: selectedFontScale } = useTheme();
+  const fontScale = getEffectiveFontScale(selectedFontScale);
 
   // ── Resolve base sizes ────────────────────────────────────
   let baseFontSize: number | undefined;
