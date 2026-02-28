@@ -8,7 +8,8 @@
     },
     "plugins": [
       "expo-localization",
-      "expo-font"
+      "expo-font",
+      "./plugins/removeSplashScreenTheme"
     ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",

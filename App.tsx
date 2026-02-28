@@ -26,8 +26,7 @@ import {
 import './global.css';
 // #endregion
 
-// Mantém o splash nativo visível até a app ficar pronta.
-SplashScreen.preventAutoHideAsync().catch(() => { });
+SplashScreen.hideAsync().catch(() => { });
 
 // #region UI helpers
 // Mantém o estilo da status bar sincronizado com o tema ativo.
