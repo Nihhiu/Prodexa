@@ -1,8 +1,10 @@
 // #region Imports
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ActivityIndicator, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { MainNavigator } from 'src/navigation';
 import { ThemeProvider } from 'src/context/ThemeContext';
 import { LanguageProvider } from 'src/context/LanguageContext';
@@ -24,11 +26,87 @@ import {
 import './global.css';
 // #endregion
 
+// Mantém o splash nativo visível até a app ficar pronta.
+SplashScreen.preventAutoHideAsync().catch(() => { });
+
 // #region UI helpers
 // Mantém o estilo da status bar sincronizado com o tema ativo.
 function ThemedStatusBar() {
   const { colors } = useTheme();
   return <StatusBar style={colors.statusBarStyle === 'light' ? 'light' : 'dark'} />;
+}
+
+function LaunchAnimationOverlay() {
+  const { colors } = useTheme();
+  const [visible, setVisible] = useState(true);
+  const opacity = useRef(new Animated.Value(1)).current;
+  const scale = useRef(new Animated.Value(0.96)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(scale, {
+        toValue: 1,
+        duration: 450,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 320,
+        delay: 260,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]).start(({ finished }) => {
+      if (finished) {
+        setVisible(false);
+      }
+    });
+  }, [opacity, scale]);
+
+  if (!visible) return null;
+
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        StyleSheet.absoluteFillObject,
+        styles.launchOverlay,
+        { backgroundColor: colors.background, opacity },
+      ]}
+    >
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <Text style={[styles.launchTitle, { color: colors.primary }]}>Prodexa</Text>
+      </Animated.View>
+    </Animated.View>
+  );
+}
+
+function AppShell() {
+  return (
+    <View style={styles.appShell}>
+      <MainNavigator />
+      <LaunchAnimationOverlay />
+      <ThemedStatusBar />
+    </View>
+  );
+}
+
+function AppBootstrap({ fontsLoaded }: { fontsLoaded: boolean }) {
+  const { isLoading } = useTheme();
+  const isReady = fontsLoaded && !isLoading;
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    SplashScreen.hideAsync().catch(() => { });
+  }, [isReady]);
+
+  if (!isReady) {
+    return null;
+  }
+
+  return <AppShell />;
 }
 // #endregion
 
@@ -47,22 +125,12 @@ export default function App() {
     Lexend_900Black,
   });
 
-  // Evita flash visual enquanto assets tipográficos ainda não estão prontos.
-  if (!fontsLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
   return (
     <ThemeProvider>
       <LanguageProvider>
         <UserProvider>
           <SafeAreaProvider>
-            <MainNavigator />
-            <ThemedStatusBar />
+            <AppBootstrap fontsLoaded={fontsLoaded} />
           </SafeAreaProvider>
         </UserProvider>
       </LanguageProvider>
@@ -70,3 +138,18 @@ export default function App() {
   );
 }
 // #endregion
+
+const styles = StyleSheet.create({
+  appShell: {
+    flex: 1,
+  },
+  launchOverlay: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  launchTitle: {
+    fontFamily: 'Lexend_700Bold',
+    fontSize: 34,
+    letterSpacing: 1.2,
+  },
+});

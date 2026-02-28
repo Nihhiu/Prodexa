@@ -3,9 +3,6 @@
     "name": "Prodexa",
     "slug": "Prodexa",
     "version": "1.0.0",
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
     "experiments": {
       "tsconfigPaths": true
     },
@@ -19,7 +16,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F4F2FA"
     },
     "assetBundlePatterns": [
       "**/*"
