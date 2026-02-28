@@ -2,7 +2,7 @@
   "expo": {
     "name": "Prodexa",
     "slug": "Prodexa",
-    "version": "1.0.0",
+    "version": "0.1.0-alpha",
     "experiments": {
       "tsconfigPaths": true
     },
@@ -22,14 +22,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nihhiu.prodexa"
     },
     "android": {
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.nihhiu.prodexa"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e6475aed-540e-41c8-99d9-51016e40c4a4"
+      }
     }
   }
 }
