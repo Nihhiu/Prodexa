@@ -54,8 +54,8 @@ export const Button = ({
     transform: [{ scale: scale.value }],
   }));
 
-  const styleByVariant: Record<ButtonVariant, { backgroundColor?: string; borderColor?: string; borderWidth?: number }> = {
-    primary: { backgroundColor: colors.primary },
+  const styleByVariant: Record<ButtonVariant, { backgroundColor?: string; borderColor?: string; borderWidth?: number; paddingVertical?: number; }> = {
+    primary: { backgroundColor: colors.accent },
     secondary: { backgroundColor: colors.accent },
     danger: { backgroundColor: colors.accent },
     outline: { borderColor: colors.accent, borderWidth: 2, backgroundColor: 'transparent' },
@@ -70,7 +70,7 @@ export const Button = ({
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         disabled={disabled}
-        className={`flex-row items-center justify-center rounded-lg ${sizeStyles[size]} ${disabled ? 'opacity-50' : ''}`}
+        className={`flex-row items-center justify-center rounded-lg min-h-12 ${sizeStyles[size]} ${disabled ? 'opacity-50' : ''}`}
         style={styleByVariant[variant]}
       >
         <View className="flex-row items-center gap-2">

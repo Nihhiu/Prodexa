@@ -46,7 +46,7 @@ export const Input = ({
     <View className="w-full gap-2">
       {label && <Text className="font-l_semibold" style={{ color: colors.text }}>{label}</Text>}
       <TextInput
-        className={`rounded-lg border-2 px-4 py-3 text-base  ${inputClassName}`}
+        className={`rounded-lg border px-4 py-3 text-base  ${inputClassName}`}
         style={[
           {
             color: colors.text,

@@ -1,13 +1,20 @@
 // #region Imports
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, View, useWindowDimensions } from 'react-native';
+import { BackHandler, ScrollView, View, useWindowDimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import {
   createStackNavigator,
   CardStyleInterpolators,
+  StackCardInterpolationProps,
 } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
+import ReanimatedAnimated, {
+  Easing as ReanimatedEasing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import {
   OnboardingScreen,
   HomeScreen,
@@ -32,6 +39,22 @@ import { useTheme } from '../hooks/useTheme';
 const STORAGE_KEY_ONBOARDING = '@prodexa/onboardingComplete';
 const tabs: TabKey[] = ['home', 'dashboard', 'settings'];
 const Stack = createStackNavigator<RootStackParamList>();
+
+const horizontalSlideWithoutPreviousParallax = ({
+  current,
+  layouts,
+}: StackCardInterpolationProps) => ({
+  cardStyle: {
+    transform: [
+      {
+        translateX: current.progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [layouts.screen.width, 0],
+        }),
+      },
+    ],
+  },
+});
 // #endregion
 
 // #region Main tabs
@@ -40,6 +63,17 @@ const MainTabsScreen: React.FC = () => {
   const scrollRef = useRef<ScrollView>(null);
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => true;
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        subscription.remove();
+      };
+    }, []),
+  );
 
   // Resolve o índice atual da tab para navegação horizontal por página.
   const getTabIndex = (tab: TabKey) => tabs.indexOf(tab);
@@ -118,6 +152,7 @@ export const MainNavigator: React.FC = () => {
 
   // ── Onboarding gate ─────────────────────────────────────────
   const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
+  const transitionOpacity = useSharedValue(1);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY_ONBOARDING).then((value) => {
@@ -126,15 +161,39 @@ export const MainNavigator: React.FC = () => {
   }, []);
 
   const handleOnboardingComplete = useCallback(() => {
-    setOnboardingDone(true);
-  }, []);
+    // Fade-out the onboarding screen slowly
+    transitionOpacity.value = withTiming(0, {
+      duration: 600,
+      easing: ReanimatedEasing.in(ReanimatedEasing.cubic),
+    });
+
+    setTimeout(() => {
+      setOnboardingDone(true);
+      // Fade-in the main content
+      requestAnimationFrame(() => {
+        transitionOpacity.value = withTiming(1, {
+          duration: 800,
+          easing: ReanimatedEasing.out(ReanimatedEasing.cubic),
+        });
+      });
+    }, 600);
+  }, [transitionOpacity]);
+
+  const transitionStyle = useAnimatedStyle(() => ({
+    flex: 1,
+    opacity: transitionOpacity.value,
+  }));
 
   // Still checking storage — avoid flash
   if (onboardingDone === null) return null;
 
   // Show onboarding
   if (!onboardingDone) {
-    return <OnboardingScreen onComplete={handleOnboardingComplete} />;
+    return (
+      <ReanimatedAnimated.View style={transitionStyle}>
+        <OnboardingScreen onComplete={handleOnboardingComplete} />
+      </ReanimatedAnimated.View>
+    );
   }
 
   // Mapeia tokens de tema interno para o tema esperado pelo React Navigation.
@@ -169,7 +228,13 @@ export const MainNavigator: React.FC = () => {
     cardStyle: { backgroundColor: colors.background },
   };
 
+  const shoppingListScreenOptions = {
+    ...settingsDetailScreenOptions,
+    cardStyleInterpolator: horizontalSlideWithoutPreviousParallax,
+  };
+
   return (
+    <ReanimatedAnimated.View style={transitionStyle}>
     <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen name="MainTabs" component={MainTabsScreen} options={{ headerShown: false }} />
@@ -216,10 +281,11 @@ export const MainNavigator: React.FC = () => {
         <Stack.Screen
           name="ShoppingList"
           component={ShoppingListScreen}
-          options={{ headerShown: false, ...settingsDetailScreenOptions }}
+          options={{ headerShown: false, ...shoppingListScreenOptions }}
         />
       </Stack.Navigator>
     </NavigationContainer>
+    </ReanimatedAnimated.View>
   );
 };
 // #endregion

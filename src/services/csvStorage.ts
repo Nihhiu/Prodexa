@@ -1,6 +1,7 @@
 import { Directory, File } from 'expo-file-system';
 import { getFeatureFile, type FeatureFileResult } from '../config/storage';
 import { syncToCloud } from './cloudSync';
+import { enqueuePendingSync } from './syncQueue';
 import type { ShoppingItem } from '../screens/dashboard/components';
 
 // ─── CSV Column Order ──────────────────────────────────────────────────
@@ -222,10 +223,13 @@ const writeAllItems = async (items: ShoppingItem[]): Promise<void> => {
   file.write(content);
   setItemsCache(items);
 
-  // Sync to cloud if in cloud mode (fire-and-forget)
-  void syncToCloud('shoppingList').catch((err) => {
-    console.warn('[csvStorage] Cloud sync after write failed:', err);
-  });
+  // Sync to cloud if in cloud mode; queue for retry if it fails
+  try {
+    await syncToCloud('shoppingList');
+  } catch (err) {
+    console.warn('[csvStorage] Cloud sync after write failed, queuing for retry:', err);
+    await enqueuePendingSync('shoppingList');
+  }
 };
 
 /**
@@ -244,10 +248,13 @@ export const addItemToCSV = async (item: ShoppingItem): Promise<void> => {
     invalidateItemsCache();
   }
 
-  // Sync to cloud if in cloud mode (fire-and-forget)
-  void syncToCloud('shoppingList').catch((err) => {
-    console.warn('[csvStorage] Cloud sync after add failed:', err);
-  });
+  // Sync to cloud if in cloud mode; queue for retry if it fails
+  try {
+    await syncToCloud('shoppingList');
+  } catch (err) {
+    console.warn('[csvStorage] Cloud sync after add failed, queuing for retry:', err);
+    await enqueuePendingSync('shoppingList');
+  }
 };
 
 /**

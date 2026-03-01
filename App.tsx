@@ -4,12 +4,14 @@ import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, Platform, StyleSheet, Text, View } from 'react-native';
+import * as NavigationBar from 'expo-navigation-bar';
 import { MainNavigator } from 'src/navigation';
 import { ThemeProvider } from 'src/context/ThemeContext';
 import { LanguageProvider } from 'src/context/LanguageContext';
 import { UserProvider } from 'src/context/UserContext';
 import { useTheme } from 'src/hooks/useTheme';
+import { initSyncQueueListeners } from 'src/services/syncQueue';
 import {
   useFonts,
   Lexend_100Thin,
@@ -82,6 +84,21 @@ function LaunchAnimationOverlay() {
 }
 
 function AppShell() {
+  useEffect(() => {
+    // Start sync queue listeners (network + app state) to process
+    // any cloud syncs that failed while offline.
+    void initSyncQueueListeners();
+
+    if (Platform.OS !== 'android') return;
+
+    void (async () => {
+      try {
+        await NavigationBar.setVisibilityAsync('hidden');
+      } catch {
+      }
+    })();
+  }, []);
+
   return (
     <View style={styles.appShell}>
       <MainNavigator />
