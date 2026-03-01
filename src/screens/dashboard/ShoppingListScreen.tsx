@@ -52,6 +52,8 @@ export const ShoppingListScreen: React.FC = () => {
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const [showAddForm, setShowAddForm] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [hasFinishedInitialRefresh, setHasFinishedInitialRefresh] = useState(false);
+  const [listAnimationSeed, setListAnimationSeed] = useState(0);
 
   // Modal state
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
@@ -67,7 +69,9 @@ export const ShoppingListScreen: React.FC = () => {
 
   // #region Load items from CSV on mount
   const loadItems = useCallback(async (forceRefresh = false) => {
+    const refreshStartedAt = Date.now();
     setIsRefreshing(true);
+    let loadedItems: ShoppingItem[] | null = null;
     try {
       // In cloud mode, sync latest from cloud to local cache on refresh
       if (forceRefresh) {
@@ -79,11 +83,29 @@ export const ShoppingListScreen: React.FC = () => {
       }
 
       const savedItems = await readAllItems({ forceRefresh });
-      setItems(savedItems);
+      loadedItems = savedItems;
     } catch (error) {
       console.warn('[ShoppingList] Failed to load items from CSV:', error);
     } finally {
+      const elapsed = Date.now() - refreshStartedAt;
+      const remaining = 1000 - elapsed;
+      if (remaining > 0) {
+        await new Promise(resolve => setTimeout(resolve, remaining));
+      }
+
       setIsRefreshing(false);
+
+      if (loadedItems) {
+        if (forceRefresh) {
+          setItems([]);
+          await new Promise(resolve => setTimeout(resolve, 200));
+          setListAnimationSeed(prev => prev + 1);
+        }
+        setItems(loadedItems);
+      }
+
+      setHasFinishedInitialRefresh(true);
+
     }
   }, []);
 
@@ -379,7 +401,7 @@ export const ShoppingListScreen: React.FC = () => {
             tintColor={colors.primary}
             colors={[colors.primary]}
             progressBackgroundColor={colors.card}
-            progressViewOffset={64}
+            progressViewOffset={32}
           />
         )}
       >
@@ -400,7 +422,7 @@ export const ShoppingListScreen: React.FC = () => {
         )}
 
         {/* Empty state */}
-        {items.length === 0 && !showAddForm && (
+        {hasFinishedInitialRefresh && items.length === 0 && !showAddForm && (
           <Animated.View
             entering={FadeIn.duration(300)}
             className="items-center justify-center py-20"
@@ -422,10 +444,11 @@ export const ShoppingListScreen: React.FC = () => {
         )}
 
         {/* Items list */}
-        {items.map(item => (
+        {hasFinishedInitialRefresh && items.map((item, index) => (
           <ShoppingListItem
-            key={item.id}
+            key={`${item.id}-${listAnimationSeed}`}
             item={item}
+            index={index}
             isShoppingMode={isShoppingMode}
             isChecked={checkedItems.has(item.id)}
             onToggleCheck={toggleCheck}
